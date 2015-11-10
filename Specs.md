@@ -77,14 +77,8 @@ Application
 - Play an amount of entity on a zone
 - Compute the score and close the game once finished
 
-
-### Plus
-
-- Display a chatbox inside the game
-- Send and receive messages through the chatbox
-
-Technical
-=========
+Backend
+=======
 
 ## Resources
 
@@ -106,6 +100,7 @@ id         | String  | A unique game identifier in [a-Z0-9]
 name       | String  | The name of the game given by its creator
 createdAt  | Date    | The date the game was created
 token      | String  | Token generated from the game's password, game's createdAt and a secretKey
+deleted    | Boolean | Games won't be deleted. This bool would rater be set.
 
 ## Routing
 
@@ -205,10 +200,137 @@ redirected to the accurate game client. Otherwise, an error is thrown to the use
 ## Game client
 
 The game client is completely handling a whole game. From the moment is hasn't start and it is
-waiting for player and the moment it ends. The client is a static page with a pre-encoded token
+waiting for players to the moment it ends. The client is a static page with a pre-encoded token
 inside that allows him to communicate with the server throught a socket. The token is used as a
 channel for the server which will broadcast messages to each client connected through that
-channel. Once two clients have been connected to a given channel, any other client might be
+channel. Once two clients have been connected to a given channel, any other client shall be
 rejected. 
+
+### Game Interfaces
+
+The state of each game isn't persisted in a database. Game boards are stored in
+memory (within a closure defined by the socket listener). The game is composed of three
+entities that implement the following interfaces:
+
+**Board**
+```
+    /* Number -> Number -> Player -> Unit */
+    invade(id, number, player)
+
+    /* Tiles -> Unit */
+    build(tiles)
+
+    /* 
+     * return each tile that has changed since the last flush
+     * Unit -> Tiles
+     */
+    flush()
+```
+
+**Tile**
+```
+    /* Player -> Unit */
+    setOwner(owner)
+
+    /* Unit -> Player */
+    owner()
+
+    /* Number -> Unit */
+    setPopulation(number)
+
+    /* Unit -> Number */
+    population()
+
+    /* Tile -> Number -> Unit */
+    attach(tile, corner)
+
+    /* Unit -> Tile[] */
+    neighbors()
+
+    /* Unit -> Number */
+    id()
+```
+
+**Player**
+```
+    /* String -> Unit */
+    setName(name)
+
+    /* Unit -> String */
+    name()
+
+    /* Number -> Unit */
+    removeEntities(number)
+
+    /* Number -> Unit */
+    init(nbEntity)
+```
+
+### Game Sockets
+
+Game clients are connected to the server via socket. Each game define a single channel of
+communication. Each client may emit some events to make the game evolves. Those events are
+listed below:
+
+- `connect { }`
+- `invade { id: Number, number: Number }`
+- `rename { name: String }`
+
+The server may also emit events towards one or both clients. Here they are:
+
+- `tilechanged { id: Number, population: Number, owner: String }`
+- `playerchanged { id: Number, name: String }`
+- `newround { playerId: Number, round: Number }`
+- `start { }`
+- `gameover { scores: Number[] }`
+
+Also, this is not mentionned above but when emitting event through the socket, clients should
+provide their access token as well. This token is used to identify the game.
+
+### Scenarios
+
+Here are some scenarios of what could happen during a game lifecycle :
+
+#### Server-side
+
+- A `connect` event is received 
+    - The server check if the given token is valid
+    - The server check the number of currently connected client
+    - On error, the connection is closed
+    - Otherwise, the client is associated to either the first or the second player (depending
+      of the order of arrival)
+
+- A `rename` event is received
+    - The server check if t<F5>he given token is valid
+    - The player corresponding to the current client is renamed
+    - The server broadcast a `playerchanged` event
+
+- A `connect` event is received
+    - The server check if the given token is valid
+    - The server check the number of currently connected client
+    - On error, the connection is closed
+    - Otherwise, the client is associated to either the first or the second player (depending
+      of the order of arrival)
+    - As this is the second player connected, the server initialize the game and broadcast an
+      event `start` followed by an event `newround`
+
+- A `rename` event is received
+    - The server check if the given token is valid
+    - The player corresponding to the current client is renamed
+    - The server broadcast a `playerchanged` event
+
+- An `invade` event is received
+    - The server check if the given token is valid
+    - The server check if the player is the one that should play
+    - The server try to remove the amount of entities from the player
+    - The server try to invade the board accordingly
+    - The server flush the board
+    - If any of these actions is errored, the initial state is recovered and a `newround` is
+      emitted to start again the current round
+    - Otherwise, a `tilechanged` event is emitted for each tile return by the flush
+    - 
+
+
+
 
 
