@@ -1,26 +1,9 @@
 Concept
 ===========
 
-## Users
-
-A user will refer to the first ressource of the application. A user account is basically a way
-to give player a way to persist their identity. In order to keep it simple for the MVP, a user
-will be the association of a nickname and a password. 
-
-## Lobby
-
-Once a user has specified a name, he's able to see a lobby with currently available games. A
-game is defined by an id - possibly a name - and also a password if required. Any user in that
-position could create a new game, set a password and wait for another player. A unique url
-should also be available to allow the opponent to quickly join the game. 
-If more than two players tried to connect to a game instance, the first two are accepted while
-the other are refused and redirected to the lobby. 
-If a player leave the game before the end, he should be able to reconnect and continue the
-game. However, the game isn't persisted. Meaning that the game exists only during its ongoing
-lifecycle and is deleted / unacessible once finished.
-
 ## Game
 
+### Rules
 Rules are simple. Two players are trying to take control of a randomly generated map, divived
 in hexagonal zones. 
 To do so, each player plays turn by turn a same amount of turns.
@@ -51,6 +34,30 @@ entities. The score is computed depending on two things:
 - The total number of entity, placed on the map, and under control
 
 The player with the highest score win the game.
+
+### Schemes
+![scheme 1](schemes/rules1.png)
+![scheme 2](schemes/rules2.png)
+![scheme 3](schemes/rules3.png)
+
+## Users
+
+A user will refer to the first ressource of the application. A user account is basically a way
+to give player a way to persist their identity. In order to keep it simple for the MVP, a user
+will be the association of a nickname and a password. 
+
+## Lobby
+
+Once a user has specified a name, he's able to see a lobby with currently available games. A
+game is defined by an id - possibly a name - and also a password if required. Any user in that
+position could create a new game, set a password and wait for another player. A unique url
+should also be available to allow the opponent to quickly join the game. 
+If more than two players tried to connect to a game instance, the first two are accepted while
+the other are refused and redirected to the lobby. 
+If a player leave the game before the end, he should be able to reconnect and continue the
+game. However, the game isn't persisted. Meaning that the game exists only during its ongoing
+lifecycle and is deleted / unacessible once finished.
+
 
 Application
 ===========
@@ -359,4 +366,5 @@ assigned to the game. In such a case, the player is directly made join the game.
 | JOIN |       | CANCEL |
 ```
 ## Game
-//TODO
+
+The game can also be 
