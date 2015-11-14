@@ -235,7 +235,6 @@ start       | `()`                | Sent when the game could start
 pause       | `()`                | Sent after a player has been disconnected
 over        | `{ @id: <Number> }[]` | Sent at the end, contains all player scores
 invade      | `{ id: <Number>, units: <Number>, ownerId: <String>` | Sent when a tile is updated
-select      | `{ id: <String>, units: <Number> }` | Sent when a player select a set of units
 round       | `{ id: <String>, round: <Number> }` | Sent when a new round is set. Inform about the current player turn.
 
 Frontend
@@ -315,8 +314,8 @@ The two links "create an account" and "login" are used to toggle the state and t
 If a user token exists, then the user has access to an entire new part of the have (whereas
 the previous section is now unavailable).
 The lobby is also pretty straightforward and appears as a list of game names. Two global
-features are available from within the lobby: create a new game (the + button) and logout.
-The lobby also displays the current user username with a tiny sweet welcome message.
+features are available from within the lobby: create a new game and logout.  The lobby also
+displays the current user username with a tiny sweet welcome message.
 
 Periodically, the game list is updated (every 3s). There is for the moment no way to manually
 refresh the list, users have to wait. After having created a game, a player might be
@@ -326,18 +325,21 @@ time.
 **state1**
 ```text
                       Have fun <username> or| LOGOUT |
-_____
-|   | game #1                                   |JOIN|
-|   | game #2                                   |JOIN|
-|   | game #4                                   |JOIN|
-| + | game #5                                   |JOIN|
-|   | game #6                                   |JOIN|
-|   | game #7                                   |JOIN|
-|___| game #8                                   |JOIN|
+
+Available games
+ game #1                                   |JOIN|
+ game #2                                   |JOIN|
+ game #4                                   |JOIN|
+ game #5                                   |JOIN|
+ game #6                                   |JOIN|
+ game #7                                   |JOIN|
+ game #8                                   |JOIN|
+
+  Willing to create your own game ? | NEW GAME |
 ```
 
 **state2**
-This shows up as an overlay after a click on the `+` button
+This shows up as an overlay after a click on the `NEW GAME` button
 
 ```
 -------------------------
@@ -365,6 +367,64 @@ assigned to the game. In such a case, the player is directly made join the game.
 
 | JOIN |       | CANCEL |
 ```
+
 ## Game
 
-The game can also be 
+The game is divided in three main states:
+
+- **Paused** when the game hasn't started or more exactly, when a player is missing (meaning
+  that a deconnection will lead back to that state).
+- **Running** while the game is actually running. Thus, the game is staying in this global,
+  each internal component of the game evolves and change state as well during the game.
+- **Over** while the game is finished. No other state can be reached from that state, it is
+  terminal.
+
+**Paused**
+```
+    Waiting for the game to be ready. A player is still missing.
+
+    
+                        | QUIT THE GAME |
+```
+
+**Running**  
+In the running state, the game might be updated thanks to event coming from the server.  Event
+aims at making the game reactive. A player should clearly identify selected pack of units or
+hovered tiles on the board. In a first time, the only event restransmitted through the socket
+will be the `invade` event. In other word, only player moves are registered.  In a second time,
+we could imagine trigger events each time a player is hovering a tile or a set of units to make
+the game really interactive and reactive for both players at the same time.
+
+The score is updated after each turn such that each player knows at any moment what is the
+current score. Also, it could be nice to remind player how scores are computed with a little 
+help box or something.
+
+```
+    <username1> | <score1>                          <score2> | <username2>
+
+    ______________________________________________________________________
+    |                                                                    |
+    |                                                                    |
+    |                                                                    |
+    |                               BOARD                                |
+    |                                                                    |
+    |                                                                    |
+    |____________________________________________________________________|
+
+    
+    Units
+                ||||||   |||||   ||||    |||     ||     |
+```
+
+**Over**
+
+```
+        The game is over. 
+
+___________________________________
+|                                 |
+| USERNAME1 WINS WITH XXXX POINTS |
+|_________________________________|
+
+      | BACK TO THE LOBBY |
+```
