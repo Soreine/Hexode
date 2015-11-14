@@ -1,3 +1,7 @@
+![License MIT](https://img.shields.io/badge/license-mit-blue.svg?style=flat-square)
+
+![technologies](images/logos.png)
+
 Concept
 ===========
 
@@ -36,9 +40,9 @@ entities. The score is computed depending on two things:
 The player with the highest score win the game.
 
 ### Schemes
-![scheme 1](schemes/rules1.png)
-![scheme 2](schemes/rules2.png)
-![scheme 3](schemes/rules3.png)
+![scheme 1](images/rules1.png)
+![scheme 2](images/rules2.png)
+![scheme 3](images/rules3.png)
 
 ## Users
 
