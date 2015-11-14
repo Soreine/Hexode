@@ -25,9 +25,8 @@ HTTP/1.1 20x OK
     "id": <String>,
     "name": <String>,
     "board": {
-        "width": <Number>,
-        "height": <Number>,
         "tiles": [{
+            "id": <Number>,
             "owner": <String>,
             "units": <Number>
         }]
@@ -50,8 +49,6 @@ HTTP/1.1 200 OK
         "id": <String>,
         "name": <String>,
         "board": {
-            "width": <Number>,
-            "height": <Number>,
             "tiles": [{
                 "owner": <String>,
                 "units": <Number>
@@ -92,8 +89,8 @@ HTTP/1.1 200 OK
 @api {post} /users Register a user
 @apiGroup User
 
-@apiParam {String} username The user username
-@apiParam {String} password The user password
+@apiParam {String{3..20}} username The user username
+@apiParam {String{4..50}} password The user password
 
 @apiSuccess {json} 201 The newly created user
 @apiSuccessExample {json} User:
@@ -125,11 +122,11 @@ HTTP/1.1 201 Created
 
 ###
 @apiName ConnectGame
-@api {get} /games/authenticate?id=:id&password=:password Retrieve a valid game token
+@api {get} /games/authenticate?gameId=:gameId&password=:password Retrieve a valid game token
 @apiGroup Game
 @apiUse userRes
 
-@apiParam {String} id The game id
+@apiParam {String} gameId The game id
 @apiParam {String} [password] The game password
 
 @apiSuccess {json} 200 Returns an access token for that game
@@ -148,9 +145,11 @@ HTTP/1.1 200 OK
 
 ###
 @apiName GetGame
-@api {get} /games Retrieve a specific game
+@api {get} /games/:gameId Retrieve a specific game
 @apiGroup Game
 @apiUse userRes
+
+@apiParam {String} gameId The game id
 
 @apiSuccess {json} 200 The requested game
 @apiUse gameSuccess
@@ -166,6 +165,9 @@ HTTP/1.1 200 OK
 @apiGroup Game
 @apiUse userRes
 
+@apiParam {String{2..20}} name The game name
+@apiParam {String{..50}} [password] The game password
+
 @apiSuccess {json} 201 The created game
 @apiUse gameSuccess
 
@@ -177,11 +179,11 @@ HTTP/1.1 200 OK
 
 ###
 @apiName DeleteGame
-@api {delete} /games/:id
+@api {delete} /games/:gameId
 @apiGroup Game
 @apiUse gameRes
 
-@apiParam {String} id The game id
+@apiParam {String} gameId The game id
 
 @apiSuccess {json} 200
 @apiSuccessExample {json} Delete response:
@@ -190,6 +192,49 @@ null
 
 @apiError {json} 401 Unauthorized: a wrong token is given
 @apiError {json} 404 Not Found: the game does not exist
+@apiUse error
+@apiVersion 0.0.1
+###
+
+###
+@apiName JoinGame
+@api {put} /games/:gameId/join Join a game
+@apiGroup Game
+@apiUse gameRes
+
+@apiParam {String} gameId The game id
+@apiParam {String} userId The user id
+
+@apiSuccess {json} 200
+@apiSuccessExample {json} No content:
+HTTP/1.1 200 OK
+null
+
+@apiError {json} 401 Unauthorized: a wrong token is given
+@apiError {json} 403 Forbidden: the game is already full
+@apiError {json} 404 Not Found: the game or the user does not exist
+@apiUse error
+@apiVersion 0.0.1
+###
+
+###
+@apiName InvadeTile
+@api {put} /games/:gameId/invade
+@apiGroup Game
+@apiUse gameRes
+
+@apiParam {String} gameId The game id
+@apiParam {String} userId The user id
+@apiParam {Number} tileId The tile id
+@apiParam {Number} units The number of units
+
+@apiSuccess {json} 200
+@apiSuccessExample {json} No content:
+HTTP/1.1 200 OK
+null
+
+@apiError {json} 400 Bad Request: the tile is invalid or the amount of units is invalid
+@apiError {json} 401 Unauthorized: a wrong token is given
 @apiUse error
 @apiVersion 0.0.1
 ###
