@@ -185,7 +185,7 @@ We'll thereby represent boards as JSON objects of the following shape:
     "tiles": [{
         "id": <Number>,
         "ownerId": <String>,
-        "units"
+        "units": <Number>,
     }],
     "players": [{
         "id": <String>,
@@ -232,5 +232,135 @@ round       | `{ id: <String>, round: <Number> }` | Sent when a new round is set
 
 Frontend
 ========
+The frontend application is divided in three main parts. Each of them are under different
+restriction access. The frontend application in itself will be a small supervisor able to
+switch between those parts while holding the application state mateliarize within tokens.  
 
-//TODO
+By the way, the frontend application should take care of browser location menaning that each action
+leading to a new screen should also be associated to a given URL in such a way that the user
+should be able to use classical browser features to navigate into the game (previous page,
+refresh etc...)
+
+In a second time, the Frontend might take advantage of the cookie browser to store a cookie
+holding the user or game token in such a way that any state of the application could be
+recovered.
+
+Furthermore, all requests to the backend are made through ajax meaning that once the client has
+been downloaded, no other page will be triggered od refreshed.
+
+## Unrestricted area
+This section can be accessed by any user that is not logged in. Once authenticated, a user
+won't be able to navigate again through this area unless he logs out.
+This section is constitued of only one screen which handle a double role:
+
+- Handle a user login through a simple form
+- Offer the user a way to subscribe through an extended version of that form
+
+
+Basically, screen states can be skteched as below:
+
+**State 1**
+```
+-------------------------
+- username:             -
+-------------------------
+
+-------------------------
+- password:             -
+-------------------------
+
+     _____________
+     |           |
+     |   LOGIN   |
+     |___________|
+
+  > Create an account <
+```
+
+**State 2**
+```
+-------------------------
+- username:             -
+-------------------------
+
+-------------------------
+- password:             -
+-------------------------
+
+-------------------------
+- password (bis):       -
+-------------------------
+
+     _______________
+    |              |
+    |   REGISTER   |
+    |______________|
+
+       > Login  <
+```
+
+The two links "create an account" and "login" are used to toggle the state and the main buttons
+`LOGIN` and `REGISTER` actually perform a request on the backend to either create a new user
+(and then log in that same user in a row) or get a valid user token after an authentication.
+
+## Lobby
+If a user token exists, then the user has access to an entire new part of the have (whereas
+the previous section is now unavailable).
+The lobby is also pretty straightforward and appears as a list of game names. Two global
+features are available from within the lobby: create a new game (the + button) and logout.
+The lobby also displays the current user username with a tiny sweet welcome message.
+
+Periodically, the game list is updated (every 3s). There is for the moment no way to manually
+refresh the list, users have to wait. After having created a game, a player might be
+automatically logged in into that game. This implies that only one game can be played at a
+time.
+
+**state1**
+```text
+                      Have fun <username> or| LOGOUT |
+_____
+|   | game #1                                   |JOIN|
+|   | game #2                                   |JOIN|
+|   | game #4                                   |JOIN|
+| + | game #5                                   |JOIN|
+|   | game #6                                   |JOIN|
+|   | game #7                                   |JOIN|
+|___| game #8                                   |JOIN|
+```
+
+**state2**
+This shows up as an overlay after a click on the `+` button
+
+```
+-------------------------
+- game's name:          -
+-------------------------
+
+-------------------------
+- password:             -
+-------------------------
+
+-------------------------
+- password (bis):       -
+-------------------------
+
+| CREATE |     | CANCEL |
+```
+
+**state3**
+This shows up after hitting a `JOIN` button, also as an overlay unless there is no password
+assigned to the game. In such a case, the player is directly made join the game.
+```
+-------------------------
+- password:             -
+-------------------------
+
+| JOIN |       | CANCEL |
+```
+
+
+
+
+## Game
+
+
