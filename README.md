@@ -233,13 +233,11 @@ small delay.
 
 Here they are:
 
-event       | params              | description
-------------|---------------------|-------------
-start       | `()`                | Sent when the game could start
-pause       | `()`                | Sent after a player has been disconnected
-over        | `{ @id: <Number> }[]` | Sent at the end, contains all player scores
-invade      | `{ id: <Number>, units: <Number>, ownerId: <String>` | Sent when a tile is updated
-round       | `{ id: <String>, round: <Number> }` | Sent when a new round is set. Inform about the current player turn.
+event       | params                | description
+------------|-----------------------|-------------
+start       | `()`                  | Sent when the game could start
+disconnect  | `{ tileId: <String> }`    | Sent after a player has been disconnected
+move        | `{ tileId: <Number>, units: <Number>, userId: <String> }` | Sent when a player makes a move
 
 Frontend
 ========
