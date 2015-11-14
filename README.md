@@ -199,7 +199,8 @@ We'll thereby represent boards as JSON objects of the following shape:
 All routes are detailed in the [API documention](http://ktorzpersonal.github.io/Hexode).
 Neverthless, a special behavior is associated to the default route `/`: this endpoint serves
 the application client. The latter is handling all further communications with the application
-backend. In fact, any other endpoints will be JSON-formatted responses. The client is shared in
+backend. In fact, any other endpoints will be JSON-formatted responses (assuming that the
+client is providing the right `X-Requested-With` header. The client is shared in
 three main parts :
 
 - The unrestricted part where a user may attempt to login or to register into the application.
@@ -357,10 +358,5 @@ assigned to the game. In such a case, the player is directly made join the game.
 
 | JOIN |       | CANCEL |
 ```
-
-
-
-
 ## Game
-
-
+//TODO
