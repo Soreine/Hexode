@@ -4,13 +4,13 @@ define({
   "description": "Describes the backend RESTful API endpoints.",
   "header": {
     "title": "Hexode API",
-    "file": "header.md"
+    "content": "<p>The application backend is able to respond to request coming from the client. Unless the client\nhas explicitely set the <code>X-Requested-With</code> header to <code>XMLHttpRequest</code>, the backend will not\nproceed the request and would rather return a game client as a plain html page. Otherwise, all\nendpoints will return a json object (success as well as errors).</p>\n"
   },
   "sampleUrl": false,
   "apidoc": "0.2.0",
   "generator": {
     "name": "apidoc",
-    "time": "2015-11-14T12:35:40.948Z",
+    "time": "2015-11-14T13:42:08.839Z",
     "url": "http://apidocjs.com",
     "version": "0.13.1"
   }

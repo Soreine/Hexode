@@ -4,6 +4,6 @@
     "description": "Describes the backend RESTful API endpoints.",
     "header": {
         "title": "Hexode API",
-        "file": "header.md"
+        "filename": "header.md"
     }
 }

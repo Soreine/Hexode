@@ -243,7 +243,7 @@ null
 
 ###
 @apiName InvadeTile
-@api {put} /games/:gameId/invade
+@api {put} /games/:gameId/invade Invade an available tile
 @apiGroup Game
 
 @apiUse json

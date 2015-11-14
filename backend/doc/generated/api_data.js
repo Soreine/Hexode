@@ -449,7 +449,7 @@ define({ "api": [
     "name": "InvadeTile",
     "type": "put",
     "url": "/games/:gameId/invade",
-    "title": "",
+    "title": "Invade an available tile",
     "group": "Game",
     "parameter": {
       "fields": {
