@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "description": "Describes the backend RESTful API endpoints.",
     "header": {
-        "title": "Hexode API"
+        "title": "Hexode API",
+        "file": "header.md"
     }
 }

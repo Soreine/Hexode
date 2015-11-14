@@ -18,12 +18,20 @@ HTTP/1.1 4xx
 ###
 
 ###
+@apiDefine json
+@apiHeader {String} X-Requested-With XMLHttpRequest
+###
+
+###
 @apiDefine gameSuccess
 @apiSuccessExample {json} Game:
 HTTP/1.1 20x OK
 {
     "id": <String>,
     "name": <String>,
+    "currentPlayerId": <String>,
+    "currentRound": <Number>,
+    "createdAt": <Date>,
     "board": {
         "tiles": [{
             "id": <Number>,
@@ -34,9 +42,7 @@ HTTP/1.1 20x OK
     "players": [{
         "id": <String>,
         "units": <Number>
-    }],
-    "currentRound": <Number>,
-    "createdAt": <Date>
+    }]
 }
 ###
 
@@ -48,8 +54,12 @@ HTTP/1.1 200 OK
     [{
         "id": <String>,
         "name": <String>,
+        "currentPlayerId": <String>,
+        "currentRound": <Number>,
+        "createdAt": <Date>,
         "board": {
             "tiles": [{
+                "id": <Number>,
                 "owner": <String>,
                 "units": <Number>
             }]
@@ -57,9 +67,7 @@ HTTP/1.1 200 OK
         "players": [{
             "id": <String>,
             "units": <Number>
-        }],
-        "currentRound": <Number>,
-        "createdAt": <Date>
+        }]
     }]
 }
 ###
@@ -68,6 +76,8 @@ HTTP/1.1 200 OK
 @apiName AuthenticateUser
 @api {get} /users/authenticate?username=:username&password=:password Retrieve a valid user token
 @apiGroup User
+
+@apiUse json
 
 @apiParam {String} username The user username
 @apiParam {String} password The user password
@@ -88,6 +98,8 @@ HTTP/1.1 200 OK
 @apiName RegisterUser
 @api {post} /users Register a user
 @apiGroup User
+
+@apiUse json
 
 @apiParam {String{3..20}} username The user username
 @apiParam {String{4..50}} password The user password
@@ -110,6 +122,8 @@ HTTP/1.1 201 Created
 @apiName GetGames
 @api {get} /games Retrieve all ongoing games
 @apiGroup Game
+
+@apiUse json
 @apiUse userRes
 
 @apiSuccess {json} 200 All available games
@@ -124,6 +138,8 @@ HTTP/1.1 201 Created
 @apiName ConnectGame
 @api {get} /games/authenticate?gameId=:gameId&password=:password Retrieve a valid game token
 @apiGroup Game
+
+@apiUse json
 @apiUse userRes
 
 @apiParam {String} gameId The game id
@@ -147,6 +163,8 @@ HTTP/1.1 200 OK
 @apiName GetGame
 @api {get} /games/:gameId Retrieve a specific game
 @apiGroup Game
+
+@apiUse json
 @apiUse userRes
 
 @apiParam {String} gameId The game id
@@ -163,6 +181,8 @@ HTTP/1.1 200 OK
 @apiName CreateGame
 @api {post} /games Create a new game
 @apiGroup Game
+
+@apiUse json
 @apiUse userRes
 
 @apiParam {String{2..20}} name The game name
@@ -181,6 +201,8 @@ HTTP/1.1 200 OK
 @apiName DeleteGame
 @api {delete} /games/:gameId
 @apiGroup Game
+
+@apiUse json
 @apiUse gameRes
 
 @apiParam {String} gameId The game id
@@ -200,6 +222,8 @@ null
 @apiName JoinGame
 @api {put} /games/:gameId/join Join a game
 @apiGroup Game
+
+@apiUse json
 @apiUse gameRes
 
 @apiParam {String} gameId The game id
@@ -221,6 +245,8 @@ null
 @apiName InvadeTile
 @api {put} /games/:gameId/invade
 @apiGroup Game
+
+@apiUse json
 @apiUse gameRes
 
 @apiParam {String} gameId The game id

@@ -89,6 +89,13 @@
             "group": "Header",
             "type": "String",
             "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
             "field": "Authorization",
             "description": "<p>A valid user token</p> "
           }
@@ -139,7 +146,7 @@
       "examples": [
         {
           "title": "Game:",
-          "content": "HTTP/1.1 20x OK\n{\n    \"id\": <String>,\n    \"name\": <String>,\n    \"board\": {\n        \"tiles\": [{\n            \"id\": <Number>,\n            \"owner\": <String>,\n            \"units\": <Number>\n        }]\n    },\n    \"players\": [{\n        \"id\": <String>,\n        \"units\": <Number>\n    }],\n    \"currentRound\": <Number>,\n    \"createdAt\": <Date>\n}",
+          "content": "HTTP/1.1 20x OK\n{\n    \"id\": <String>,\n    \"name\": <String>,\n    \"currentPlayerId\": <String>,\n    \"currentRound\": <Number>,\n    \"createdAt\": <Date>,\n    \"board\": {\n        \"tiles\": [{\n            \"id\": <Number>,\n            \"owner\": <String>,\n            \"units\": <Number>\n        }]\n    },\n    \"players\": [{\n        \"id\": <String>,\n        \"units\": <Number>\n    }]\n}",
           "type": "json"
         }
       ]
@@ -177,6 +184,13 @@
     "header": {
       "fields": {
         "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
           {
             "group": "Header",
             "type": "String",
@@ -264,6 +278,13 @@
             "group": "Header",
             "type": "String",
             "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
             "field": "Authorization",
             "description": "<p>A valid game token</p> "
           }
@@ -305,7 +326,7 @@
       "examples": [
         {
           "title": "Game:",
-          "content": "HTTP/1.1 20x OK\n{\n    \"id\": <String>,\n    \"name\": <String>,\n    \"board\": {\n        \"tiles\": [{\n            \"id\": <Number>,\n            \"owner\": <String>,\n            \"units\": <Number>\n        }]\n    },\n    \"players\": [{\n        \"id\": <String>,\n        \"units\": <Number>\n    }],\n    \"currentRound\": <Number>,\n    \"createdAt\": <Date>\n}",
+          "content": "HTTP/1.1 20x OK\n{\n    \"id\": <String>,\n    \"name\": <String>,\n    \"currentPlayerId\": <String>,\n    \"currentRound\": <Number>,\n    \"createdAt\": <Date>,\n    \"board\": {\n        \"tiles\": [{\n            \"id\": <Number>,\n            \"owner\": <String>,\n            \"units\": <Number>\n        }]\n    },\n    \"players\": [{\n        \"id\": <String>,\n        \"units\": <Number>\n    }]\n}",
           "type": "json"
         }
       ]
@@ -340,6 +361,13 @@
             "group": "Header",
             "type": "String",
             "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
             "field": "Authorization",
             "description": "<p>A valid user token</p> "
           }
@@ -368,7 +396,7 @@
       "examples": [
         {
           "title": "Games:",
-          "content": "HTTP/1.1 200 OK\n{\n    [{\n        \"id\": <String>,\n        \"name\": <String>,\n        \"board\": {\n            \"tiles\": [{\n                \"owner\": <String>,\n                \"units\": <Number>\n            }]\n        },\n        \"players\": [{\n            \"id\": <String>,\n            \"units\": <Number>\n        }],\n        \"currentRound\": <Number>,\n        \"createdAt\": <Date>\n    }]\n}",
+          "content": "HTTP/1.1 200 OK\n{\n    [{\n        \"id\": <String>,\n        \"name\": <String>,\n        \"currentPlayerId\": <String>,\n        \"currentRound\": <Number>,\n        \"createdAt\": <Date>,\n        \"board\": {\n            \"tiles\": [{\n                \"id\": <Number>,\n                \"owner\": <String>,\n                \"units\": <Number>\n            }]\n        },\n        \"players\": [{\n            \"id\": <String>,\n            \"units\": <Number>\n        }]\n    }]\n}",
           "type": "json"
         }
       ]
@@ -399,6 +427,13 @@
     "header": {
       "fields": {
         "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
           {
             "group": "Header",
             "type": "String",
@@ -507,6 +542,13 @@
             "group": "Header",
             "type": "String",
             "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
             "field": "Authorization",
             "description": "<p>A valid game token</p> "
           }
@@ -604,6 +646,13 @@
             "group": "Header",
             "type": "String",
             "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
             "field": "Authorization",
             "description": "<p>A valid game token</p> "
           }
@@ -679,7 +728,20 @@
     },
     "version": "0.0.1",
     "filename": "./api.js.coffee",
-    "groupTitle": "User"
+    "groupTitle": "User",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          }
+        ]
+      }
+    }
   },
   {
     "name": "RegisterUser",
@@ -751,6 +813,19 @@
     },
     "version": "0.0.1",
     "filename": "./api.js.coffee",
-    "groupTitle": "User"
+    "groupTitle": "User",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          }
+        ]
+      }
+    }
   }
 ]
