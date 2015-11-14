@@ -31,7 +31,7 @@ zone). A minimum of 1 entity and a maximum of 6 entities could be placed.
 
 Once the player has made a move, the game will evolve accordingly to three rules, in that order:
 
-- The selected zone is now belonging to the player which did the move. This should be clearly
+- The selected zone now belongs to the player which did the move. This should be clearly
   identified by a color, a marker or whatever
 
 - Each adjacent zone controlled by the opponent and for which, the amount of entity is
@@ -55,9 +55,10 @@ The player with the highest score win the game.
 Application
 ===========
 
-## Feature
+## Features briefly
 
 ### Authentication and account
+
 - Ensure a user is authenticated 
 - Create a new user
 - Login a user
@@ -72,10 +73,67 @@ Application
 
 ### Game
 
-- Display a map generated randomly
-- Select a amount of entity to play
+- Display a map of a default known shape
+- Select an amount of entity to play
 - Play an amount of entity on a zone
 - Compute the score and close the game once finished
+
+## Features in depth 
+
+### Registration
+
+In order to access the content of the application as the lobby and the game client, users have
+to register and authenticate themselves. The authentication is done using an username and a
+repeated password. This will create an account unless the username is already taken by an
+existing user. To log in, a user would have to use those defined credentials. For the MVP,
+there is no password recovery feature, and no way to change neither the password nor the
+username. The process is really simple and should be effortless. 
+
+### Authentication
+
+Then, in order to login a user, the client might hit a specific endpoint of the api in order to
+retrieve an access token. That token should then be transmitted through the appropriate HTTP
+header on each request. As the client is for the moment provided by the application server on a
+special endpoint, a login "session" is terminated with that client (when the user close the
+tab or the window on its browser). 
+
+### Lobby
+
+In its minimalist form, the lobby is a list of available games, with means to create a new game
+that will be added to the list. A game might be deleted by any user that has joined the game
+and unless the game has started (meaning that, in the case of a two players game, only the
+first one - aka the creator - is able to delete the game). 
+By the way, when a game is created, the user responsible for the creation is automatically made
+a participant of that game (sending a join request will have no effect, the player has already
+joined the game).
+
+### Join a game
+
+When a game is created, it is stored inside a database. In order to perform operations on a
+game, the client needs to require an access token for that game in the similar way of what it
+is doing for the user authentication. The api will then need to provide that token as an
+authorization.  Requesting a token does not have any impact on the game object though. 
+
+### Play a game
+
+Once a client is in possesson of a game token, it is able to send request that will change the
+state of a game. Those actions are parts of the API and can be reached as well through HTTP. 
+Then, when making a change to a given game entity the server might also emit some event through
+a socket bound a defined port. Events are split into channels and does not interfer - a channel
+being nothing more than a game id. Several client might be listening on a channel and are then
+able to update their states accordingly. Events are detailed in the next section.
+
+### Game details
+
+In order to keep it simple for the MVP, all games will firstly be shaped the same way. Meaning
+that tiles belong to a predefined place accordingly to their id / position. The number of units
+available units is fixed to 21 (1+2+3+4+5+6), the number of rounds to 12 as well as the number
+of tiles. Players have to play all of their units in 6 rounds each (the player starting being
+choosen randomly) in such a way that they cannot play twice the same amount of units in a same
+game (they will have to play once 1 unit, once 2 units, etc...). 
+The game can start only when two players have joined. If one player is disconnected, the game
+will be paused until the player recovers its access. Once the game is over, no more action can
+be performed on the game. 
 
 Backend
 =======
@@ -98,74 +156,81 @@ name       |  type   | comment
 -----------|---------|--------
 id         | String  | A unique game identifier in [a-Z0-9]
 name       | String  | The name of the game given by its creator
-token      | String  | Token generated from the game's password, game's createdAt and a secretKey
-board      | String  | A serialized version of the board. The process is describe below
+password   | String  | Encrypted game password
+board      | String  | A serialized version of the board. The process is described below
 createdAt  | Date    | The date the game was created
 deleted    | Boolean | Games won't be deleted. This bool would rater be set.
 
+### Board 
+
+Board will be stored as a plain JSON object as an attribute of game's entity rather than being
+stored in their own document. This choice is the consequence of several facts:
+
+- We want to avoid creating a relation between two entities as we're gonna use a non
+  relational data model representation (mongoDB)
+- The size and the shape of a board is known by advance. The object cannot grow and is under
+  control.
+- The client will never try to access to a board object without being in the context of a game.
+  Also, boards have no existence beyond the one of the game.
+
+We'll thereby represent boards as JSON objects of the following shape:
+
+```json
+{
+    "id": <String>,
+    "name": <String>,
+    "currentRound": <Number>,
+    "currentPlayerId": <String>,
+    "createdAt": <Date>,
+    "tiles": [{
+        "id": <Number>,
+        "ownerId": <String>,
+        "units"
+    }],
+    "players": [{
+        "id": <String>,
+        "units": <Number>
+    }]
+}
+```
+
 ## Routing
 
-Any route except the login and subscription routes are under authentication protection. Meaning
-that any access will be denied unless the user has successfully been authenticated.
-
-### Serve Static Files
-
-> `Authorization`: none  
-> `[GET] /`   
-> Home
-
-This endpoints serves the application client. The client is handling all further communication
-with the application. In fact, any other endpoints will be JSON-formatted responses. The client
-is shared in three main parts :
+All routes are detailed in the [API documention](http://ktorzpersonal.github.io/Hexode).
+Neverthless, a special behavior is associated to the default route `/`: this endpoint serves
+the application client. The latter is handling all further communications with the application
+backend. In fact, any other endpoints will be JSON-formatted responses. The client is shared in
+three main parts :
 
 - The unrestricted part where a user may attempt to login or to register into the application.
 - The lobby which shows available games and offer a user to either create a new game or join an
   existing one. 
 - The game itself.
 
-### API documentation
+## Events
 
-see [here](http://ktorzpersonal.github.io/Hexode)
+In order to communicate changes to several clients, the server is able to send small
+event messages through a socket on which is listening the game client. Events might contain
+data giving details about the nature of the event. Except for the connexion and deconnexion
+events, all events are being emitted from the server to the clients. Events are detailed below.
 
-## Registration / Login process
+As a matter of fact, the server is in charge of sending events only to the effetive recipients.
+Plus, it will also buffer emitted event is one the client isn't reachable at the emission time.
+Once every client is reachable, buffered events should be consumed in the same order with a
+small delay.
 
-In order to access the content of the application as the lobby and the game client, users have
-to register and authenticate themselves. The authentication is done using a username and a
-repeated password. This will create an account unless the username is already taken by an
-existing user. To log in, a user would have to use those defined credentials. For the MVP,
-there is no password recovery feature, and no way to change neither the password nor the
-username. The process is really simple and should be effortless. 
+Here they are:
 
-Then, in order to login a user, the client might hit a specific endpoint of the api in order to
-retrieve an access token. That token should then be transmitted through the appropriate HTTP
-header on each request. As the client is for the moment provided by the application server on a
-special endpoint, the login "session" is terminated with that client (when the user close the
-tab or the window on its browser). 
+event       | params              | description
+------------|---------------------|-------------
+start       | `()`                | Sent when the game could start
+pause       | `()`                | Sent after a player has been disconnected
+over        | `{ @id: <Number> }[]` | Sent at the end, contains all player scores
+invade      | `{ id: <Number>, units: <Number>, ownerId: <String>` | Sent when a tile is updated
+select      | `{ id: <String>, units: <Number> }` | Sent when a player select a set of units
+round       | `{ id: <String>, round: <Number> }` | Sent when a new round is set. Inform about the current player turn.
 
-## Join a game
+Frontend
+========
 
-When a game is created it is stored inside a database. In order to perform operation on a game,
-the client needs to require an access token for that game in the similar way of what it is
-doing for the user authentication. The api will then need that token as an authorization.
-Requesting a token does not have any impact on the game object though. 
-
-## Play a game
-
-Once a client is in possesson of a game token, it is able to send request that will change the
-state of a game. Those action are parts of the API and can be reached as well through HTTP. 
-Then, when making a change to a given game entity the server might also emit some event through
-a socket bound a defined port. Events are split into channels and does not interfer - a channel
-being nothing more than a game id. Several client might be listening on a channel and are then
-able to update their states accordingly. Events are detailed in the next section.
-
-## Game details
-
-In order to keep it simple for the MVP, all games will firstly be shaped the same way. Meaning
-that tiles belong to a predefined place accordingly to their id / position. The number of units
-available units is fixed to 21 (1+2+3+4+5+6), the number of rounds to 12 as well as the number
-of tiles. Players have to play all of their units in 6 rounds each (the player starting being
-choosen randomly) in such a way that they cannot play twice the same amount of units in a same
-game (they will have to play once 1 unit, once 2 units, etc...). 
-The game can start only when two players have joined. If one player is disconnected, the game
-will be paused until the player recovers its access. Once the game is over, no more action can
-be performed on the game. 
+//TODO
