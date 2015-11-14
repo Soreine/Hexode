@@ -55,7 +55,7 @@ The player with the highest score win the game.
 Application
 ===========
 
-## Features
+## Feature
 
 ### Authentication and account
 - Ensure a user is authenticated 
@@ -98,8 +98,9 @@ name       |  type   | comment
 -----------|---------|--------
 id         | String  | A unique game identifier in [a-Z0-9]
 name       | String  | The name of the game given by its creator
-createdAt  | Date    | The date the game was created
 token      | String  | Token generated from the game's password, game's createdAt and a secretKey
+board      | String  | A serialized version of the board. The process is describe below
+createdAt  | Date    | The date the game was created
 deleted    | Boolean | Games won't be deleted. This bool would rater be set.
 
 ## Routing
@@ -107,70 +108,24 @@ deleted    | Boolean | Games won't be deleted. This bool would rater be set.
 Any route except the login and subscription routes are under authentication protection. Meaning
 that any access will be denied unless the user has successfully been authenticated.
 
-
 ### Serve Static Files
 
+> `Authorization`: none  
 > `[GET] /`   
 > Home
 
-This endpoint serves the application lobby. The lobby client will be used to show all available
-game and to propose player to create either create a new game or join an existing one. There
-will possibly be a chatbox available as well.
+This endpoints serves the application client. The client is handling all further communication
+with the application. In fact, any other endpoints will be JSON-formatted responses. The client
+is shared in three main parts :
 
-> `[GET] /login`
-> Login & Register
+- The unrestricted part where a user may attempt to login or to register into the application.
+- The lobby which shows available games and offer a user to either create a new game or join an
+  existing one. 
+- The game itself.
 
-By this route, a user may attempt to login or to register into the application. Both options are
-accessibles from this route. A non-authenticated trying to access another static route like the
-lobby or the game client will be redirected to this route. 
+### API documentation
 
-> `[GET] /play/:token`  
-> Game client
-
-This will serve the game client to the interested player. The game client will connect to the
-given game token. The token is generated from a secret key, the game password and the date of
-creation of the game. In the lobby, player can try to join game by retrieving the related
-token, if successful, they might be redirected to the corresponding client. 
-
-### API endpoints
-
-> `[POST] /users/session`  
-> Authenticate a user
-
-Check and authenticate a user using given credentials.
-
-> `[DELETE] /users/session`
-> Logout a user
-
-Used to disconnect a user from the application.
-
-> `[POST] /users`  
-> Register the user  
-
-Handle a user subscription. 
-
-> `[GET] /games`  
-> Retrieves all ongoing available games    
-
-This will be called regularly by the lobby to fetch existing games.
-
-> `[GET] /games/:password`
-> Retrieve a game from a given password
-
-Return an instance of a game is the password is correct. An error otherwise.
-Remark: The password has to be encrypted with itself using an hmac256 algorithm.
-
-> `[POST] /games`  
-> Create a new game
-
-This will create a new game and made it available for another user. 
-
-> `[DELETE] /games/:id`
-> Delete an existing game
-
-Only the creator of a game is able to delete it. Once a game is over, it will automatically be
-collected by the app. Also, a game that has been started for too long and isn't finished will
-be deleted by the app (after 24h for instance).
+see [here](http://ktorzpersonal.github.io/Hexode)
 
 ## Registration / Login process
 
@@ -181,156 +136,36 @@ existing user. To log in, a user would have to use those defined credentials. Fo
 there is no password recovery feature, and no way to change neither the password nor the
 username. The process is really simple and should be effortless. 
 
-Also, by default (and because this is the only available behavior), credentials are stored in a
-cookie and are automatically retrieved on each access to the website. A user can get rid of the
-cookie by disconnecting from the application. Otherwise, the cookie will persist until
-invalidation by the browser.
+Then, in order to login a user, the client might hit a specific endpoint of the api in order to
+retrieve an access token. That token should then be transmitted through the appropriate HTTP
+header on each request. As the client is for the moment provided by the application server on a
+special endpoint, the login "session" is terminated with that client (when the user close the
+tab or the window on its browser). 
 
 ## Join a game
 
-When a game is created it is stored inside a database. A player might supply a password during
-the creation that will be used to generate a token for the game as:
+When a game is created it is stored inside a database. In order to perform operation on a game,
+the client needs to require an access token for that game in the similar way of what it is
+doing for the user authentication. The api will then need that token as an authorization.
+Requesting a token does not have any impact on the game object though. 
 
-`token = id|hmac256(hmac256(password, password)|createdAt, secretKey)`
+## Play a game
 
-When a user attempt to join the game, it will be ask the game password. The lobby client will
-then attempt to retrieve the game token from the api. In case of success, the user might be
-redirected to the accurate game client. Otherwise, an error is thrown to the user.
+Once a client is in possesson of a game token, it is able to send request that will change the
+state of a game. Those action are parts of the API and can be reached as well through HTTP. 
+Then, when making a change to a given game entity the server might also emit some event through
+a socket bound a defined port. Events are split into channels and does not interfer - a channel
+being nothing more than a game id. Several client might be listening on a channel and are then
+able to update their states accordingly. Events are detailed in the next section.
 
-## Game client
+## Game details
 
-The game client is completely handling a whole game. From the moment is hasn't start and it is
-waiting for players to the moment it ends. The client is a static page with a pre-encoded token
-inside that allows him to communicate with the server throught a socket. The token is used as a
-channel for the server which will broadcast messages to each client connected through that
-channel. Once two clients have been connected to a given channel, any other client shall be
-rejected. 
-
-### Game Interfaces
-
-The state of each game isn't persisted in a database. Game boards are stored in
-memory (within a closure defined by the socket listener). The game is composed of three
-entities that implement the following interfaces:
-
-**Board**
-```
-    /* Number -> Number -> Player -> Unit */
-    invade(id, number, player)
-
-    /* Tiles -> Unit */
-    build(tiles)
-
-    /* 
-     * return each tile that has changed since the last flush
-     * Unit -> Tiles
-     */
-    flush()
-```
-
-**Tile**
-```
-    /* Player -> Unit */
-    setOwner(owner)
-
-    /* Unit -> Player */
-    owner()
-
-    /* Number -> Unit */
-    setPopulation(number)
-
-    /* Unit -> Number */
-    population()
-
-    /* Tile -> Number -> Unit */
-    attach(tile, corner)
-
-    /* Unit -> Tile[] */
-    neighbors()
-
-    /* Unit -> Number */
-    id()
-```
-
-**Player**
-```
-    /* String -> Unit */
-    setName(name)
-
-    /* Unit -> String */
-    name()
-
-    /* Number -> Unit */
-    removeEntities(number)
-
-    /* Number -> Unit */
-    init(nbEntity)
-```
-
-### Game Sockets
-
-Game clients are connected to the server via socket. Each game define a single channel of
-communication. Each client may emit some events to make the game evolves. Those events are
-listed below:
-
-- `connect { }`
-- `invade { id: Number, number: Number }`
-- `rename { name: String }`
-
-The server may also emit events towards one or both clients. Here they are:
-
-- `tilechanged { id: Number, population: Number, owner: String }`
-- `playerchanged { id: Number, name: String }`
-- `newround { playerId: Number, round: Number }`
-- `start { }`
-- `gameover { scores: Number[] }`
-
-Also, this is not mentionned above but when emitting event through the socket, clients should
-provide their access token as well. This token is used to identify the game.
-
-### Scenarios
-
-Here are some scenarios of what could happen during a game lifecycle :
-
-#### Server-side
-
-- A `connect` event is received 
-    - The server check if the given token is valid
-    - The server check the number of currently connected client
-    - On error, the connection is closed
-    - Otherwise, the client is associated to either the first or the second player (depending
-      of the order of arrival)
-
-- A `rename` event is received
-    - The server check if t<F5>he given token is valid
-    - The player corresponding to the current client is renamed
-    - The server broadcast a `playerchanged` event
-
-- A `connect` event is received
-    - The server check if the given token is valid
-    - The server check the number of currently connected client
-    - On error, the connection is closed
-    - Otherwise, the client is associated to either the first or the second player (depending
-      of the order of arrival)
-    - As this is the second player connected, the server initialize the game and broadcast an
-      event `start` followed by an event `newround`
-
-- A `rename` event is received
-    - The server check if the given token is valid
-    - The player corresponding to the current client is renamed
-    - The server broadcast a `playerchanged` event
-
-- An `invade` event is received
-    - The server check if the given token is valid
-    - The server check if the player is the one that should play
-    - The server try to remove the amount of entities from the player
-    - The server try to invade the board accordingly
-    - The server flush the board
-    - If any of these actions is errored, the initial state is recovered and a `newround` is
-      emitted to start again the current round
-    - Otherwise, a `tilechanged` event is emitted for each tile return by the flush
-    - 
-
-
-
-
-
+In order to keep it simple for the MVP, all games will firstly be shaped the same way. Meaning
+that tiles belong to a predefined place accordingly to their id / position. The number of units
+available units is fixed to 21 (1+2+3+4+5+6), the number of rounds to 12 as well as the number
+of tiles. Players have to play all of their units in 6 rounds each (the player starting being
+choosen randomly) in such a way that they cannot play twice the same amount of units in a same
+game (they will have to play once 1 unit, once 2 units, etc...). 
+The game can start only when two players have joined. If one player is disconnected, the game
+will be paused until the player recovers its access. Once the game is over, no more action can
+be performed on the game. 
