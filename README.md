@@ -430,3 +430,65 @@ ___________________________________
 
       | BACK TO THE LOBBY |
 ```
+
+
+## Components
+
+On the frontend-side, the framework *React* will be used to build the whole client. *React*
+enables a high modularity such that the client will be split in several smaller independant
+components. All those components could and should be developed and be tested separately. 
+
+Here below are components that are roughly implied from the section above. Each of them should
+constitute a single task of development. Each component also comes with a specific pre-defined
+css style in such a manner that they could be imported and be fully functional. 
+
+Not all components would be detailed here. Some of them are higher-level containers and other
+one might be created on purpose during the development (if one of the following components
+needs to be reffined).
+
+#### FormInput
+This component receive user text input. Using a validator, it can render itself to indicate
+wether or not is the input valid. 
+
+**states**
+- `value: String`
+
+**props**
+- `validator: String -> { isValid: Boolean, err: String }`
+
+#### FormButton
+Use to handle user click interactions. Every FormButton implements a debounce mechanism to avoid
+being triggered twice in a row. 
+
+**props**
+- `delay: Number`
+- `onClick: () -> ()`
+
+#### ExpandableForm
+Expandable form stands for handy containers that encapsulate several FormInputs et FormButtons
+in such a manner that the form can be expended to provide additional FormInputs and a new
+action.
+Sub-containers might be defined to identify common FormInputs and additional one. 
+
+**states**
+- `expanded: Boolean`
+
+**props**
+- `onSubmit: Object -> ()`
+
+**Children**
+- `FormInput`
+- `FormButton`
+
+#### OverlayForm
+#### Notification
+#### Game
+#### GameList
+#### WelcomeLabel
+#### TileBoard
+#### Tile 
+#### UnitsSet
+#### UnitsBoard
+#### OverlayMessage
+#### GameOverLabel
+#### ScoreLabel
