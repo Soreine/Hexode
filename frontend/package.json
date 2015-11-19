@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-
+    "start": "webpack-dev-server",
+    "build:uglify": "find dist/*.js -exec uglify -s \\{} -o \\{} \\;",
+    "build": "webpack && npm run build:uglify"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,7 @@
   },
   "homepage": "https://github.com/KtorZPersonal/Hexode#readme",
   "dependencies": {
+    "babel-polyfill": "^6.2.0",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
     "react-redux": "^4.0.0",
@@ -33,6 +36,9 @@
     "webpack-dev-server": "^1.12.1"
   },
   "babel": {
-    "presets": ["es2015", "react"]
+    "presets": [
+      "es2015",
+      "react"
+    ]
   }
 }

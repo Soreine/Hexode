@@ -1,7 +1,5 @@
 module.exports = {
-    entry: [
-        './src/index.jsx'
-    ],
+    entry: './src/index.jsx',
     module: {
         loaders: [{
             test: /\.jsx?$/,
