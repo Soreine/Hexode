@@ -1,0 +1,16 @@
+.notification-wrapper {
+    width: 100%;
+    height: auto;
+    padding: 2em 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.notification-error {
+    background: #EA6153;
+}

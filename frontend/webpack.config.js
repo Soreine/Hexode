@@ -1,14 +1,19 @@
+var webpack = require('webpack')
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
-    entry: './src/index.jsx',
+    entry: [
+        'webpack-dev-server/client?http://localhost:8080',
+        'webpack/hot/only-dev-server',
+        './src/index.jsx'
+    ],
     module: {
         loaders: [
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 include: __dirname,
-                loader: 'babel'
+                loader: 'react-hot!babel'
             },
             {
                 test: /\.scss$/,
@@ -25,9 +30,11 @@ module.exports = {
         filename: 'bundle.js'
     },
     plugins: [
-        new ExtractTextPlugin("[name].css")
+        new ExtractTextPlugin("[name].css"),
+        new webpack.HotModuleReplacementPlugin()
     ],
     devServer: {
-        contentBase: './dist'
+        contentBase: './dist',
+        hot: true
     }
 };

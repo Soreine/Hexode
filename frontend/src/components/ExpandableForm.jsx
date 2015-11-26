@@ -5,21 +5,34 @@ import '../styles/components/expandable_form.scss'
 export default React.createClass({
     handleClick: function (e) {
         e.preventDefault()
-        this.props.onClick(this.props.expanded)
+        this.props.onExpand(this.props.expanded)
+    },
+    handleLogin: function (e) {
+        e.preventDefault()
+        this.props.onLogin(this.refs.username.value, this.refs.password.value)
+    },
+    handleRegister: function (e) {
+
     },
     render() {
-        const { expanded } = this.props
-        const passwordBis = (<VerifInput type="password" placeholder="password (again)" />)
+        const { expanded, disabled } = this.props
+        const passwordBis = (<VerifInput ref="passwordbis" type="password" placeholder="password (again)" />)
 
         return (
             <div className="exp-form-wrapper">
-                <VerifInput placeholder="username" />
-                <VerifInput type="password" placeholder="password" />
-                { expanded && passwordBis }
-                <input type="button" value={ expanded ? "Register" : "Login" } />
-                <a onClick={this.handleClick}>{
-                    expanded ? "Back to login" : "Create an account"
-                }</a>
+                <form onSubmit = { expanded ? this.handleRegister : this.handleLogin }>
+                    <VerifInput ref="username" placeholder="username" />
+                    <VerifInput ref="password" type="password" placeholder="password" />
+                        { expanded && passwordBis }
+                    <input
+                        type = "submit"
+                        disabled = { disabled }
+                        value = { expanded ? "Register" : "Login" }
+                    />
+                </form>
+                    <a onClick={this.handleClick}>
+                        { expanded ? "Back to login" : "Create an account" }
+                    </a>
             </div>
         )
     }
