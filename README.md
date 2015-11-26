@@ -211,13 +211,8 @@ All routes are detailed in the [API documention](http://ktorzpersonal.github.io/
 Neverthless, a special behavior is associated to the default route `/`: this endpoint serves
 the application client. The latter is handling all further communications with the application
 backend. In fact, any other endpoints will be JSON-formatted responses (assuming that the
-client is providing the right `X-Requested-With` header. The client is shared in
-three main parts :
-
-- The unrestricted part where a user may attempt to login or to register into the application.
-- The lobby which shows available games and offer a user to either create a new game or join an
-  existing one. 
-- The game itself.
+client is providing the right `X-Requested-With` header (without an appropriate header, the
+application will just fail with an appropriate message and header).
 
 ## Events
 
@@ -238,6 +233,37 @@ event       | params                | description
 start       | `()`                  | Sent when the game could start
 disconnect  | `{ tileId: <String> }`    | Sent after a player has been disconnected
 move        | `{ tileId: <Number>, units: <Number>, userId: <String> }` | Sent when a player makes a move
+
+## Application structure
+
+Here is detailed the backend application structure and all naming conventions presumed for the
+development.
+
+```
+|- src
+|---- config.js
+|---- main.js
+|---- models
+|------- FirstModel.js
+|------- SecondModel.js
+|---- controllers
+|------- first_controller.js
+|------- second_controller.js
+|---- routes
+|------- first_router.js
+|------- second_router.js
+|---- lib
+|------- lib_folder
+|---------- index.js
+|---------- whatever.js
+|------- other_lib_folder
+|---------- whatever.js
+```
+
+To sum up:
+
+- Models are named `UpperCamelCase`
+- Everything else is named `snake_case`
 
 Frontend
 ========
@@ -431,14 +457,107 @@ ___________________________________
       | BACK TO THE LOBBY |
 ```
 
+## State-tree
+
+On the frontend-side, the application will rely on *Redux* which is a simple framework that
+gives us the ability to represent the app as plain JavaScript object. This object is called a
+state an represent the ... state of the application. Because an application is rather complex,
+the state is in fact divided into several sub-state suhc that we end with a tree so called
+state-tree. The client is then nothing more than a visual representation of the state-tree.
+User interactions may update the state and thus, provoke a new rendering of the state through a
+new visual representation. 
+
+Our state-tree wil be the following:
+
+```json
+{
+    ----------------------------
+    - Application Level
+    ----------------------------
+
+    user: Null|{
+        token: <String>,
+        id: <String>,
+        username: <String>
+    },    
+    pending: <Boolean>,
+    notification: {
+        status: <String={Error|Success|Info|Warning}>,
+        content: <String>
+    },
+    validations: [{
+        field: <String>,
+        status: <String={Valid|Invalid}>,
+        message: <String>
+    }],
+    
+
+    ----------------------------
+    - Unrestricted Area
+    ----------------------------
+
+    loginForm: {
+        expanded: <Boolean>
+    },
+    
+    
+    ----------------------------
+    - Lobby
+    ----------------------------
+
+    loby: {
+        games: [<String>],
+        joinRequest: <Boolean>,
+        createRequest: <Boolean>
+    },
+
+    games: [{
+        id: <String>,
+        name: <String>,
+        maxPlayer: <Number>,
+        nbPlayer: <Number>
+    }]
+
+
+    -----------------------------
+    - Game
+    -----------------------------
+    
+    game: Null|{
+        token: <String|Null>,
+        status: <String=Paused|Running|Over>,
+        currentRound: <Number>,
+        currentPlayerId: <String>,
+        players: {
+            id: <String>,
+            username: <String>,
+            units: {
+                selected: <Number>,
+                remaining: <Number>
+            }
+        },
+        tiles: [{
+            id: <Number>,
+            ownerId: <String>,
+            units: <Number>,
+            hovered: <Boolean>,
+            selected: <Boolean>
+        }],
+    }
+}
+```
+
+## Actions
+
+//TODO
 
 ## Components
 
-On the frontend-side, the framework *React* will be used to build the whole client. *React*
-enables a high modularity such that the client will be split in several smaller independant
-components. All those components could and should be developed and be tested separately. 
+Alongside with *Redux*, the framework *React* will be used to build the client. *React* enables
+a high modularity such that the client will be split in several smaller independant components.
+All those components could and should be developed and be tested separately. 
 
-Here below are components that are roughly implied from the section above. Each of them should
+Right below are components that are roughly implied from the section above. Each of them should
 constitute a single task of development. Each component also comes with a specific pre-defined
 css style in such a manner that they could be imported and be fully functional. 
 
@@ -446,49 +565,7 @@ Not all components would be detailed here. Some of them are higher-level contain
 one might be created on purpose during the development (if one of the following components
 needs to be reffined).
 
-#### FormInput
-This component receive user text input. Using a validator, it can render itself to indicate
-wether or not is the input valid. 
+## Containers
 
-**states**
-- `value: String`
+// TODO
 
-**props**
-- `validator: String -> { isValid: Boolean, err: String }`
-
-#### FormButton
-Use to handle user click interactions. Every FormButton implements a debounce mechanism to avoid
-being triggered twice in a row. 
-
-**props**
-- `delay: Number`
-- `onClick: () -> ()`
-
-#### ExpandableForm
-Expandable form stands for handy containers that encapsulate several FormInputs et FormButtons
-in such a manner that the form can be expended to provide additional FormInputs and a new
-action.
-Sub-containers might be defined to identify common FormInputs and additional one. 
-
-**states**
-- `expanded: Boolean`
-
-**props**
-- `onSubmit: Object -> ()`
-
-**Children**
-- `FormInput`
-- `FormButton`
-
-#### OverlayForm
-#### Notification
-#### Game
-#### GameList
-#### WelcomeLabel
-#### TileBoard
-#### Tile 
-#### UnitsSet
-#### UnitsBoard
-#### OverlayMessage
-#### GameOverLabel
-#### ScoreLabel
