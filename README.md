@@ -467,7 +467,7 @@ state-tree. The client is then nothing more than a visual representation of the 
 User interactions may update the state and thus, provoke a new rendering of the state through a
 new visual representation. 
 
-Our state-tree wil be the following:
+Our state-tree will be the following:
 
 ```json
 {
@@ -549,7 +549,100 @@ Our state-tree wil be the following:
 
 ## Actions
 
-//TODO
+### Unrestricted Area
+
+- `toggleForm (expanded)`
+
+```
+{
+    loginForm: {
+        expanded: _
+    }
+}   
+```
+
+- `loginRequest ()`  
+
+```
+{
+    pending: true
+}
+```
+
+- `loginResolve (response)`  
+
+
+```
+{
+    pending: false
+    user: {
+        token: _
+        id: _
+        username: _
+    }
+    notification: {
+        status: Success
+        content: "Successfully logged in!"
+    }
+}
+```
+
+- `loginReject (error)`
+
+```
+{
+    pending: false
+    notification: {
+        status: Error
+        content: _
+    }
+}
+```
+
+-  `registerRequest ()`
+
+```
+{
+    pending: true
+}   
+```
+
+- `registerResolve ()` 
+
+```
+{
+    pending: true
+    notification: {
+        status: Success
+        content: "Successfully registered! Trying to log in."
+    }
+}
+```
+
+- `registerReject (error)` 
+
+```
+{
+    pending: false
+    notification: {
+        status: Error
+        content: _
+    }
+    validations: [{
+        field: _
+        status: _
+        message: _
+    }, ...]
+}
+```
+
+### Lobby
+
+// TODO
+
+### Game
+
+// TODO
 
 ## Components
 
@@ -565,7 +658,26 @@ Not all components would be detailed here. Some of them are higher-level contain
 one might be created on purpose during the development (if one of the following components
 needs to be reffined).
 
+### Common
+
+// TODO
+
+### Unrestricted Area
+
+// TODO
+
+### Lobby 
+
+// TODO
+
+### Game
+
+// TODO
+
 ## Containers
 
 // TODO
 
+## Application structure
+
+// TODO
