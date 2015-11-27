@@ -609,4 +609,44 @@ needs to be reffined).
 
 ## Application structure
 
-// TODO
+Here is detailed the frontend application structure and all naming conventions presumed for the
+development.
+
+```
+|- src
+|---- index.jsx
+|---- actions
+|------- index.js
+|------- common.js
+|------- unrestricted\_area.js
+|------- lobby.js
+|------- game.js
+|---- components
+|------- Component1.jsx
+|------- Component2.jsx
+|------- Component3.jsx
+|------- Component4.jsx
+|---- containers
+|------- UnrestrictedArea.jsx
+|------- Lobby.jsx
+|------- Game.jsx
+|------- App.jsx
+|---- reducers
+|------- index.js
+|------- common.js
+|------- lobby.js
+|------- game.js
+|---- styles
+|------- component1.scss
+|------- component2.scss
+|------- component3.scss
+|------- component4.scss
+|---- vendor
+|------- library1
+|------- library2
+```
+
+To sum up:
+
+- Components and Containers are named `UpperCamelCase`
+- Everything eslse is named `snake_case`
