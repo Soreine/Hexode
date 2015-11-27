@@ -469,7 +469,7 @@ new visual representation.
 
 Our state-tree will be the following:
 
-```json
+```
 {
     ----------------------------
     - Application Level
