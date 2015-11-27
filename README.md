@@ -472,7 +472,7 @@ Our state-tree will be the following:
 ```
 {
     ----------------------------
-    - Application Level
+    - Application Level / Common
     ----------------------------
 
     user: Null|{
@@ -491,21 +491,11 @@ Our state-tree will be the following:
         message: <String>
     }],
     
-
-    ----------------------------
-    - Unrestricted Area
-    ----------------------------
-
-    loginForm: {
-        expanded: <Boolean>
-    },
-    
-    
     ----------------------------
     - Lobby
     ----------------------------
 
-    loby: {
+    lobby: {
         games: [<String>],
         joinRequest: <Boolean>,
         createRequest: <Boolean>
@@ -549,96 +539,35 @@ Our state-tree will be the following:
 
 ## Actions
 
+### Common
+
+- `notificationRead () :: ~notification`
+
 ### Unrestricted Area
 
-- `toggleForm (expanded)`
-
-```
-{
-    loginForm: {
-        expanded: _
-    }
-}   
-```
-
-- `loginRequest ()`  
-
-```
-{
-    pending: true
-}
-```
-
-- `loginResolve (response)`  
-
-
-```
-{
-    pending: false
-    user: {
-        token: _
-        id: _
-        username: _
-    }
-    notification: {
-        status: Success
-        content: "Successfully logged in!"
-    }
-}
-```
-
-- `loginReject (error)`
-
-```
-{
-    pending: false
-    notification: {
-        status: Error
-        content: _
-    }
-}
-```
-
--  `registerRequest ()`
-
-```
-{
-    pending: true
-}   
-```
-
-- `registerResolve ()` 
-
-```
-{
-    pending: true
-    notification: {
-        status: Success
-        content: "Successfully registered! Trying to log in."
-    }
-}
-```
-
-- `registerReject (error)` 
-
-```
-{
-    pending: false
-    notification: {
-        status: Error
-        content: _
-    }
-    validations: [{
-        field: _
-        status: _
-        message: _
-    }, ...]
-}
-```
+- `loginQuery () :f: ~pending`  
+- `loginResolve (response) :: ~pending, ~user, ~notification`  
+- `loginReject (error) :: ~pending, ~notification`  
+- `registerQuery () :f: ~pending`  
+- `registerResolve (response) :: ~pending, ~notification`  
+- `registerReject (error) :: ~pending, ~notification, ~validations`
 
 ### Lobby
 
-// TODO
+- `logoutRequest () :: ~user, ~notification, ~validations, ~loby, ~games, ~game`
+- `gamesQuery (silent) :f: ~pending`
+- `gamesResolve (silent, response) :: ~pending, ~games, ~lobby.games`
+- `gamesReject (silent, error) :: ~pending, ~notification`
+- `joinRequest () :: ~joinRequest`
+- `joinCancel() :: ~joinRequest`
+- `joinQuery () :f: ~pending`
+- `joinResolve (response) :: ~pending, ~joinRequest, ~game, ~notification`
+- `joinReject (error) :: ~pending, ~notification`
+- `createRequest () :: ~createRequest`
+- `createCancel () :: ~createRequest`
+- `createQuery () :f: ~pending`
+- `createResolve (response) :: ~pending, ~createRequest, ~game, ~notification`
+- `createReject (error) :: ~pending, ~notification, ~validation`
 
 ### Game
 
