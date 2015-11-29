@@ -5,7 +5,7 @@ import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 import { syncReduxAndRouter } from 'redux-simple-router'
-import { Router, Route, IndexRoute } from 'react-router'
+import { Router, Route, IndexRoute, Redirect } from 'react-router'
 
 import reducer from './reducers'
 import * as containers from './containers'
@@ -35,6 +35,7 @@ ReactDOM.render(
                     path="login"
                     component={containers.UnrestrictedArea}
                 />
+                <Redirect from="*" to="/" />
             </Route>
         </Router>
     </Provider>,
