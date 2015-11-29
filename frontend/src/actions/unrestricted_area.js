@@ -17,7 +17,7 @@ export function loginQuery (username, password) {
         /* Mock backend response */
         setTimeout(() => {
             dispatch(common.endFetching())
-            disptach(common.setNotification({
+            dispatch(common.setNotification({
                 status: common.constants.NOTIFICATION_SUCCESS,
                 content: "Successfully logged in"
             }))
@@ -30,7 +30,7 @@ export function loginQuery (username, password) {
     }
 }
 
-export function registerQuery (username, password) {
+export function registerQuery (username, password, passwordbis) {
     return dispatch => {
         dispatch(common.startFetching())
 
@@ -38,7 +38,7 @@ export function registerQuery (username, password) {
         setTimeout(() => {
             dispatch(common.endFetching())
             dispatch(common.setNotification({
-                common.constants.NOTIFICATION_ERROR,
+                status: common.constants.NOTIFICATION_ERROR,
                 content: "Failed to register"
             }))
             dispatch(loginReject({
