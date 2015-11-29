@@ -14,11 +14,27 @@ const store = applyMiddleware(thunk)(createStore)(reducer)
 const history = createBrowserHistory()
 syncReduxAndRouter(history, store)
 
+
+const authenticate = state => (_, redirect) => {
+    if (state.common.user == null) {
+        return redirect(null, '/login')
+    }
+}
+
 ReactDOM.render(
     <Provider store={store}>
         <Router history={history}>
-            <Route path="/" component={containers.App}>
-                <Route path="login" component={containers.RestrictedArea} />
+            <Route
+                path="/"
+                component={containers.App}>
+                <IndexRoute
+                    component={containers.Lobby}
+                    onEnter={authenticate(store.getState())}
+                />
+                <Route
+                    path="login"
+                    component={containers.UnrestrictedArea}
+                />
             </Route>
         </Router>
     </Provider>,

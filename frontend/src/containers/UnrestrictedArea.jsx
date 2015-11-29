@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 const RestrictedArea = React.createClass({
     render() {
         return (
-            <div>Restricted Area</div>
+            <div>Unrestricted Area</div>
         )
     }
 })

@@ -1,2 +1,2 @@
 export { default as App } from './App'
-export { default as RestrictedArea } from './RestrictedArea'
+export { default as UnrestrictedArea } from './UnrestrictedArea'
