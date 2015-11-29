@@ -35,31 +35,28 @@ export default React.createClass({
             <VerifInput
                 ref="passwordbis"
                 type="password"
-                placeholder="password (again)" />
-        )
+                placeholder="password (again)" />)
 
-        return (
-            <Div className="exp-form-wrapper" content = (
-                <form
-                    onSubmit = { expanded ? this.handleRegister : this.handleLogin }>
-                    <VerifInput ref="username" placeholder="username" />
-                    <VerifInput
-                        ref="password"
-                        type="password"
-                        placeholder="password"
-                    />
-                    { expanded && passwordBis }
-                    <input
-                        type = "submit"
-                        disabled = { disabled }
-                        value = { expanded ? "Register" : "Login" }
-                    />
-                </form>
-                    <a
-                        onClick={this.toggleExpand}>
-                        { expanded ? "Back to login" : "Create an account" }
-                    </a>
-            )/>
-        )
+        return (<div className="exp-form-wrapper">
+            <form
+                onSubmit = { expanded ? this.handleRegister : this.handleLogin }>
+                <VerifInput ref="username" placeholder="username" />
+                <VerifInput
+                    ref="password"
+                    type="password"
+                    placeholder="password"
+                />
+                { expanded && passwordBis }
+                <input
+                    type = "submit"
+                    disabled = { disabled }
+                    value = { expanded ? "Register" : "Login" }
+                />
+            </form>
+            <a
+                onClick={this.toggleExpand}>
+                { expanded ? "Back to login" : "Create an account" }
+            </a>
+        </div>)
     }
 })
