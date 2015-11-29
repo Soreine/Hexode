@@ -16,15 +16,21 @@ syncReduxAndRouter(history, store)
 
 
 //TODO: move elsewhere
-const authenticate = state => (_, redirect) => {
-    if (state.common.user == null) {
+const onlyAuthenticated = getState => (_, redirect) => {
+    if (getState().unrestricted_area.user == null) {
         return redirect(null, '/login')
+    }
+}
+
+const onlyNonAuthenticated = getState => (_, redirect) => {
+    if (getState().unrestricted_area.user != null) {
+        return redirect(null, '/')
     }
 }
 
 // DEBUG
 store.subscribe(() => {
-    console.log(JSON.stringify(store.getState(), null, 2))
+    //console.log(JSON.stringify(store.getState(), null, 2))
 })
 
 ReactDOM.render(
@@ -35,11 +41,12 @@ ReactDOM.render(
                 component={containers.App}>
                 <IndexRoute
                     component={containers.Lobby}
-                    onEnter={authenticate(store.getState())}
+                    onEnter={onlyAuthenticated(store.getState)}
                 />
                 <Route
                     path="login"
                     component={containers.UnrestrictedArea}
+                    onEnter={onlyNonAuthenticated(store.getState)}
                 />
                 <Redirect from="*" to="/" />
             </Route>

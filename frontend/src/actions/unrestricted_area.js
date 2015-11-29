@@ -1,4 +1,5 @@
 import * as common from './common'
+import { updatePath } from 'redux-simple-router'
 
 export const LOGIN_RESOLVE      = "LOGIN_RESOLVE"
 export const LOGIN_REJECT       = "LOGIN_REJECT"
@@ -26,6 +27,7 @@ export function loginQuery (username, password) {
                 token: "dfg98dig98d6tgh87gdn9a78",
                 username: "KtorZ",
             }))
+            dispatch(updatePath('/'))
         }, 1000)
     }
 }
