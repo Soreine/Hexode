@@ -12,12 +12,12 @@ export const registerReject     = error     => ({ type: REGISTER_REJECT, error }
 
 export function loginQuery (username, password) {
     return dispatch => {
-        dispatch(common.startFetching())
+        dispatch(common.fetchingStart())
 
         /* Mock backend response */
         setTimeout(() => {
-            dispatch(common.endFetching())
-            dispatch(common.setNotification({
+            dispatch(common.fetchingEnd())
+            dispatch(common.notificationSet({
                 status: common.constants.NOTIFICATION_SUCCESS,
                 content: "Successfully logged in"
             }))
@@ -32,12 +32,12 @@ export function loginQuery (username, password) {
 
 export function registerQuery (username, password, passwordbis) {
     return dispatch => {
-        dispatch(common.startFetching())
+        dispatch(common.fetchingStart())
 
         /* Mock backend response */
         setTimeout(() => {
-            dispatch(common.endFetching())
-            dispatch(common.setNotification({
+            dispatch(common.fetchingEnd())
+            dispatch(common.notificationSet({
                 status: common.constants.NOTIFICATION_ERROR,
                 content: "Failed to register"
             }))

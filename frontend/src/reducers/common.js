@@ -18,12 +18,12 @@ export default function (state = defaultState, action) {
                 notification: null
             })
 
-        case actions.START_FETCHING:
+        case actions.FETCHING_START:
             return Object.assign({}, state, {
                 pending: true
             })
 
-        case actions.END_FETCHING:
+        case actions.FETCHING_END:
             return Object.assign({}, state, {
                 pending: false
             })
