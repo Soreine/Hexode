@@ -4,10 +4,7 @@ import '../styles/components/notification.scss'
 
 export default React.createClass({
     classname(status) {
-        let classnames = ["notification-wrapper"]
-        return status === 'error' ?
-            classnames.concat('notification-error').join(" ") :
-            classnames
+        return ["notification-wrapper"].concat(`notification-${status}`).join(" ").toLowerCase()
     },
 
     render() {
