@@ -15,11 +15,17 @@ const history = createBrowserHistory()
 syncReduxAndRouter(history, store)
 
 
+//TODO: move elsewhere
 const authenticate = state => (_, redirect) => {
     if (state.common.user == null) {
         return redirect(null, '/login')
     }
 }
+
+// DEBUG
+store.subscribe(() => {
+    console.log(JSON.stringify(store.getState(), null, 2))
+})
 
 ReactDOM.render(
     <Provider store={store}>
