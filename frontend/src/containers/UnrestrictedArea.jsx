@@ -14,11 +14,11 @@ const RestrictedArea = React.createClass({
     },
 
     render() {
-        const { fetching, validations } = this.props
+        const { pending, validations } = this.props
 
         return (
             <ExpandableForm
-                disabled={fetching}
+                disabled={pending}
                 onLogin={this.handleFormLogin}
                 onRegister={this.handleFormRegister}
             />
@@ -28,7 +28,7 @@ const RestrictedArea = React.createClass({
 
 const select = state => {
     return {
-        fetching: state.common.fetching,
+        pending: state.common.pending,
         validations: state.common.validations
     }
 }
