@@ -1,16 +1,21 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore, applyMiddleware, combineReducers } from 'redux'
+import createBrowserHistory from 'history/lib/createBrowserHistory'
 import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
-import createBrowserHistory from 'history/lib/createBrowserHistory'
-import { syncReduxAndRouter } from 'redux-simple-router'
 import { Router, Route, IndexRoute, Redirect } from 'react-router'
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux'
+import { syncReduxAndRouter } from 'redux-simple-router'
+
+/* Only for development */
+import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react'
+import { devTools } from 'redux-devtools'
+
 
 import reducer from './reducers'
 import * as containers from './containers'
 
-const store = applyMiddleware(thunk)(createStore)(reducer)
+const store = compose(applyMiddleware(thunk), devTools())(createStore)(reducer)
 const history = createBrowserHistory()
 syncReduxAndRouter(history, store)
 
@@ -34,23 +39,20 @@ store.subscribe(() => {
 })
 
 ReactDOM.render(
+    <div>
     <Provider store={store}>
         <Router history={history}>
-            <Route
-                path="/"
-                component={containers.App}>
-                <IndexRoute
-                    component={containers.Lobby}
-                    onEnter={onlyAuthenticated(store.getState)}
-                />
-                <Route
-                    path="login"
-                    component={containers.UnrestrictedArea}
-                    onEnter={onlyNonAuthenticated(store.getState)}
-                />
+            <Route path="/" component={containers.App}>
+                <IndexRoute component={containers.Lobby} onEnter={onlyAuthenticated(store.getState)} />
+                <Route path="login" component={containers.UnrestrictedArea} onEnter={onlyNonAuthenticated(store.getState)}/>
                 <Redirect from="*" to="/" />
             </Route>
         </Router>
-    </Provider>,
+    </Provider>
+    <DebugPanel top right bottom>
+        <DevTools store={store} monitor={LogMonitor}/>
+    </DebugPanel>
+    </div>
+    ,
     document.getElementById('app')
 )
