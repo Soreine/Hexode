@@ -45,6 +45,7 @@ ReactDOM.render(
             <Route path="/" component={containers.App}>
                 <IndexRoute component={containers.Lobby} onEnter={onlyAuthenticated(store.getState)} />
                 <Route path="login" component={containers.UnrestrictedArea} onEnter={onlyNonAuthenticated(store.getState)}/>
+                <Route path="logout" onEnter={onlyAuthenticated(store.getState)} />
                 <Redirect from="*" to="/" />
             </Route>
         </Router>
