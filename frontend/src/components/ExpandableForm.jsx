@@ -1,6 +1,5 @@
 import React from 'react'
 import VerifInput from './VerifInput'
-import Div from './Div'
 import '../styles/components/expandable_form.scss'
 
 export default React.createClass({
@@ -32,7 +31,7 @@ export default React.createClass({
         const { expanded } = this.state
 
         const passwordBis = (
-            <VerifInput
+            <input
                 ref="passwordbis"
                 type="password"
                 placeholder="password (again)" />)
@@ -40,8 +39,8 @@ export default React.createClass({
         return (<div className="exp-form-wrapper">
             <form
                 onSubmit = { expanded ? this.handleRegister : this.handleLogin }>
-                <VerifInput ref="username" placeholder="username" />
-                <VerifInput
+                <input ref="username" placeholder="username" />
+                <input
                     ref="password"
                     type="password"
                     placeholder="password"
