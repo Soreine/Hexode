@@ -22,16 +22,14 @@ syncReduxAndRouter(history, store)
 
 //TODO: move elsewhere
 const onlyAuthenticated = getState => (_, redirect) => {
-    if (getState().unrestricted_area.user == null) {
-        return redirect(null, '/login')
-    }
+    !isAuthenticated(getState()) && redirect(null, '/login')
 }
 
 const onlyNonAuthenticated = getState => (_, redirect) => {
-    if (getState().unrestricted_area.user != null) {
-        return redirect(null, '/')
-    }
+    isAuthenticated(getState()) && redirect(null, '/')
 }
+
+const isAuthenticated = state => !!state.unrestricted_area.user
 
 // DEBUG
 store.subscribe(() => {
