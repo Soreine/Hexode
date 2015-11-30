@@ -475,39 +475,49 @@ Our state-tree will be the following:
     - Application Level / Common
     ----------------------------
 
-    user: Null|{
-        token: <String>,
-        id: <String>,
-        username: <String>
-    },    
-    pending: <Boolean>,
-    notification: {
-        status: <String={Error|Success|Info|Warning}>,
-        content: <String>
+    common: {
+        pending: <Boolean>,
+        notification: {
+            status: <String={Error|Success|Info|Warning}>,
+            content: <String>
+        },
+        validations: [{
+            field: <String>,
+            status: <String={Valid|Invalid}>,
+            message: <String>
+        }]
     },
-    validations: [{
-        field: <String>,
-        status: <String={Valid|Invalid}>,
-        message: <String>
-    }],
+
+    ----------------------------
+    - Unrestricted Area
+    ----------------------------
     
+    unrestricted_area: {
+        user: Null|{
+            token: <String>,
+            id: <String>,
+            username: <String>
+        },    
+    }
+
     ----------------------------
     - Lobby
     ----------------------------
 
     lobby: {
-        games: [<String>],
-        joinRequest: <Boolean>,
+        joinRequest: Null|{
+            gameId: <String>
+        },
         createRequest: <Boolean>
+        games: {
+            [id]: {
+                id: <String>,
+                name: <String>,
+                maxPlayer: <Number>,
+                nbPlayer: <Number>
+            }
+        }
     },
-
-    games: [{
-        id: <String>,
-        name: <String>,
-        maxPlayer: <Number>,
-        nbPlayer: <Number>
-    }]
-
 
     -----------------------------
     - Game
@@ -544,30 +554,10 @@ Our state-tree will be the following:
 - `notificationRead () :: ~notification`
 
 ### Unrestricted Area
-
-- `loginQuery () :f: ~pending`  
-- `loginResolve (response) :: ~pending, ~user, ~notification`  
-- `loginReject (error) :: ~pending, ~notification`  
-- `registerQuery () :f: ~pending`  
-- `registerResolve (response) :: ~pending, ~notification`  
-- `registerReject (error) :: ~pending, ~notification, ~validations`
+// TODO
 
 ### Lobby
-
-- `logoutRequest () :: ~user, ~notification, ~validations, ~loby, ~games, ~game`
-- `gamesQuery (silent) :f: ~pending`
-- `gamesResolve (silent, response) :: ~pending, ~games, ~lobby.games`
-- `gamesReject (silent, error) :: ~pending, ~notification`
-- `joinRequest () :: ~joinRequest`
-- `joinCancel() :: ~joinRequest`
-- `joinQuery () :f: ~pending`
-- `joinResolve (response) :: ~pending, ~joinRequest, ~game, ~notification`
-- `joinReject (error) :: ~pending, ~notification`
-- `createRequest () :: ~createRequest`
-- `createCancel () :: ~createRequest`
-- `createQuery () :f: ~pending`
-- `createResolve (response) :: ~pending, ~createRequest, ~game, ~notification`
-- `createReject (error) :: ~pending, ~notification, ~validation`
+// TODO
 
 ### Game
 
@@ -618,7 +608,7 @@ development.
 |---- actions
 |------- index.js
 |------- common.js
-|------- unrestricted\_area.js
+|------- unrestricted_area.js
 |------- lobby.js
 |------- game.js
 |---- components
@@ -641,6 +631,13 @@ development.
 |------- component2.scss
 |------- component3.scss
 |------- component4.scss
+|---- assets
+|------- asset1.svg
+|------- asset2.svg
+|------- asset3.svg
+|---- utils
+|------- util1.js
+|------- util2.js
 |---- vendor
 |------- library1
 |------- library2
