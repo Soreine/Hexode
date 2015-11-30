@@ -22,6 +22,13 @@ export default function (state = getInitialState('common'), action) {
                 pending: false
             })
 
+        case actions.RESET:
+            return {
+                notification: null,
+                validations: [],
+                games: []
+            }
+
         default: return state
     }
 }

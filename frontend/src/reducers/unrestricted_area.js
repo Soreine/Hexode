@@ -10,6 +10,9 @@ export default function (state = getInitialState('unrestricted_area'), action) {
         case actions.REGISTER_REJECT:
             return Object.assign({}, state, { user: null })
 
+        case actions.RESET:
+            return { user: null }
+
         default: return state
     }
 }
