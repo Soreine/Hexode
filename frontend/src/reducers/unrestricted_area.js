@@ -1,8 +1,6 @@
 import * as actions from '../actions/unrestricted_area'
 
-const defaultState = { user: null }
-
-export default function (state = defaultState, action) {
+export default function (state = getInitialState('unrestricted_area'), action) {
     switch (action.type) {
         case actions.LOGIN_RESOLVE:
         case actions.REGISTER_RESOLVE:

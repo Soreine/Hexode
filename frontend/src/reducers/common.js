@@ -1,12 +1,6 @@
 import * as actions from '../actions/common'
 
-const defaultState = {
-    pending: false,
-    notification: null,
-    validations: []
-}
-
-export default function (state = defaultState, action) {
+export default function (state = getInitialState('common'), action) {
     switch (action.type) {
         case actions.NOTIFICATION_SET:
             return Object.assign({}, state, {
