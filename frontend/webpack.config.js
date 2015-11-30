@@ -16,6 +16,10 @@ module.exports = {
                 loader: 'react-hot!babel'
             },
             {
+                test:/\.svg$/,
+                loader: 'file-loader'
+            },
+            {
                 test: /\.scss$/,
                 loader: ExtractTextPlugin.extract("css-loader!sass-loader")
             }

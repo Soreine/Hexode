@@ -11,14 +11,19 @@ const App = React.createClass({
         return (<Notification {...notification} onClick={this.hideNotification}/>)
     },
 
+    createLoader() {
+        return (<div className="loader"></div>)
+    },
+
     hideNotification() {
         this.props.dispatch(actions.notificationRead())
     },
 
     render() {
-        const { notification } = this.props
+        const { notification, pending } = this.props
 
         return (<div>
+            {pending && this.createLoader()}
             {notification && this.createNotification(notification)}
             {this.props.children}
         </div>)
@@ -27,6 +32,7 @@ const App = React.createClass({
 
 function select (state) {
     return {
+        pending: state.common.pending,
         notification: state.common.notification
     }
 }
