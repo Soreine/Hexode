@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import NavigationBar from '../components/NavigationBar'
+import NavigationItem from '../components/NavigationItem'
 import * as lobby from '../actions/lobby'
 
 const Lobby = React.createClass({
@@ -23,8 +25,9 @@ const Lobby = React.createClass({
         }
 
         return (<div>
-            <p>Welcome {username} !</p>
-            <a href="#" onClick={this.logout}>logout</a>
+            <NavigationBar username={username}>
+                <NavigationItem name="logout" onClick={this.logout} />
+            </NavigationBar>
             <div>
                 {renderGames(games)}
             </div>
