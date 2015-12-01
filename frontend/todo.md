@@ -2,6 +2,6 @@
 - [ ] Ensure that the `common.pending` state is set correctly (on multiple requests)
 - [ ] Handle callbacks that arrives with a state no longer acceptable (games fetch after a logout for instance)
 - [ ] Create a custom `combineMiddlewares` more flexible (with common part not prefixed) 
-- [ ] Create a NavBar component
+- [x] Create a NavBar component
 - [ ] Create a fake util `MockServer` to centralize server mocked response (also add some randomness)
 - [ ] Create a popup / overlay component 
