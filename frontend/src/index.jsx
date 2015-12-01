@@ -48,7 +48,7 @@ ReactDOM.render(
             </Route>
         </Router>
     </Provider>
-    <DebugPanel top right bottom>
+    <DebugPanel left right bottom style="height: 300px;">
         <DevTools store={store} monitor={LogMonitor}/>
     </DebugPanel>
     </div>
