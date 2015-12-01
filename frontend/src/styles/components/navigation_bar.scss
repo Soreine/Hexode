@@ -1,0 +1,42 @@
+.navigationbar-brand,
+.navigationbar-wrapper,
+.navigationbar-right {
+    position: absolute;
+    top: 0;
+    height: 2em;
+    line-height: 2em;
+    color: #141414;
+}
+
+.navigationbar-brand {
+    left: 10em;
+    color: #999999;
+    font-family: Impact;
+}
+
+.navigationbar-right {
+    right: 10em;
+}
+
+.navigationbar-user {
+    border-right: 1px solid #ccc;
+    padding-right: 1em;
+    display: inline-block;
+}
+
+.navigationbar-wrapper {
+    background: #f3f3f3;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+}
+
+.navigationbar-menu {
+    margin: 0;
+    padding: 0 1em;
+    list-style-type: none;
+    display: inline-block;
+}
+
+body {
+    margin-top: 3em;
+}

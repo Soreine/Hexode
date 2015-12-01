@@ -1,0 +1,17 @@
+.navigationitem {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.navigationitem a,
+.navigationitem a:hover,
+.navigationitem a:visited {
+    text-decoration: none;
+    color: #4aa3df;
+    font-family: arial;
+}
+
+.navigationitem a:hover {
+    color: #2980b9;
+}
