@@ -2,9 +2,29 @@
   {
     "name": "ConnectGame",
     "type": "get",
-    "url": "/games/authenticate?gameId=:gameId&password=:password",
+    "url": "/games/authenticate?gameId=:gameId",
     "title": "Retrieve a valid game token",
     "group": "Game",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>The encoded game password</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -81,27 +101,7 @@
     },
     "version": "0.0.1",
     "filename": "./api.js.coffee",
-    "groupTitle": "Game",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "X-Requested-With",
-            "description": "<p>XMLHttpRequest</p> "
-          },
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "Authorization",
-            "description": "<p>A valid user token</p> "
-          }
-        ]
-      }
-    }
+    "groupTitle": "Game"
   },
   {
     "name": "CreateGame",
@@ -206,7 +206,7 @@
     "name": "DeleteGame",
     "type": "delete",
     "url": "/games/:gameId",
-    "title": "",
+    "title": "Delete a game",
     "group": "Game",
     "parameter": {
       "fields": {
@@ -228,15 +228,15 @@
             "group": "Success 200",
             "type": "<p>json</p> ",
             "optional": false,
-            "field": "200",
+            "field": "204",
             "description": ""
           }
         ]
       },
       "examples": [
         {
-          "title": "Delete response:",
-          "content": "HTTP/1.1 200 OK\nnull",
+          "title": "No Content:",
+          "content": "HTTP/1.1 204 No Content\nnull",
           "type": "json"
         }
       ]
@@ -447,7 +447,7 @@
   },
   {
     "name": "InvadeTile",
-    "type": "put",
+    "type": "patch",
     "url": "/games/:gameId/invade",
     "title": "Invade an available tile",
     "group": "Game",
@@ -499,8 +499,8 @@
       },
       "examples": [
         {
-          "title": "No content:",
-          "content": "HTTP/1.1 200 OK\nnull",
+          "title": "Game:",
+          "content": "HTTP/1.1 20x OK\n{\n    \"id\": <String>,\n    \"name\": <String>,\n    \"currentPlayerId\": <String>,\n    \"currentRound\": <Number>,\n    \"createdAt\": <Date>,\n    \"board\": {\n        \"tiles\": [{\n            \"id\": <Number>,\n            \"owner\": <String>,\n            \"units\": <Number>\n        }]\n    },\n    \"players\": [{\n        \"id\": <String>,\n        \"units\": <Number>\n    }]\n}",
           "type": "json"
         }
       ]
@@ -558,7 +558,7 @@
   },
   {
     "name": "JoinGame",
-    "type": "put",
+    "type": "patch",
     "url": "/games/:gameId/join",
     "title": "Join a game",
     "group": "Game",
@@ -596,8 +596,8 @@
       },
       "examples": [
         {
-          "title": "No content:",
-          "content": "HTTP/1.1 200 OK\nnull",
+          "title": "Game:",
+          "content": "HTTP/1.1 20x OK\n{\n    \"id\": <String>,\n    \"name\": <String>,\n    \"currentPlayerId\": <String>,\n    \"currentRound\": <Number>,\n    \"createdAt\": <Date>,\n    \"board\": {\n        \"tiles\": [{\n            \"id\": <Number>,\n            \"owner\": <String>,\n            \"units\": <Number>\n        }]\n    },\n    \"players\": [{\n        \"id\": <String>,\n        \"units\": <Number>\n    }]\n}",
           "type": "json"
         }
       ]
@@ -663,9 +663,29 @@
   {
     "name": "AuthenticateUser",
     "type": "get",
-    "url": "/users/authenticate?username=:username&password=:password",
+    "url": "/users/authenticate?username=:username",
     "title": "Retrieve a valid user token",
     "group": "User",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>The encoded user password</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -675,13 +695,6 @@
             "optional": false,
             "field": "username",
             "description": "<p>The user username</p> "
-          },
-          {
-            "group": "Parameter",
-            "type": "<p>String</p> ",
-            "optional": false,
-            "field": "password",
-            "description": "<p>The user password</p> "
           }
         ]
       }
@@ -728,20 +741,7 @@
     },
     "version": "0.0.1",
     "filename": "./api.js.coffee",
-    "groupTitle": "User",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "X-Requested-With",
-            "description": "<p>XMLHttpRequest</p> "
-          }
-        ]
-      }
-    }
+    "groupTitle": "User"
   },
   {
     "name": "RegisterUser",
@@ -823,6 +823,83 @@
             "optional": false,
             "field": "X-Requested-With",
             "description": "<p>XMLHttpRequest</p> "
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "Logout",
+    "type": "delete",
+    "url": "/logout",
+    "title": "Remove cookies to logout",
+    "group": "user",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "<p>json</p> ",
+            "optional": false,
+            "field": "204",
+            "description": ""
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "No Content:",
+          "content": "HTTP/1.1 204 No Content\nnull",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "<p>json</p> ",
+            "optional": false,
+            "field": "400",
+            "description": "<p>Bad Request: There's no cookie to remove</p> "
+          },
+          {
+            "group": "Error 4xx",
+            "type": "<p>json</p> ",
+            "optional": false,
+            "field": "401",
+            "description": "<p>Unauthorized: a wrong token is given</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 4xx\n{\n    \"error\": <String>\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.2",
+    "filename": "./api.js.coffee",
+    "groupTitle": "user",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "X-Requested-With",
+            "description": "<p>XMLHttpRequest</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>A valid user token</p> "
           }
         ]
       }

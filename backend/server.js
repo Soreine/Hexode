@@ -12,7 +12,7 @@ const DB_URL = "mongodb://" + (DB_USERNAME ? DB_USERNAME + ":" + DB_PASSWORD + "
     DB_HOST + ":" + DB_PORT + "/" + DB_NAME
 
 /* Define the configuration for the app */
-const CONFIG = require('./app/config.js');
+const CONFIG = require('./src/config.js');
 CONFIG.DB_URL = DB_URL;
 
 /* Launch the app and start listening */

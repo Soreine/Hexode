@@ -74,13 +74,13 @@ HTTP/1.1 200 OK
 
 ###
 @apiName AuthenticateUser
-@api {get} /users/authenticate?username=:username&password=:password Retrieve a valid user token
+@api {get} /users/authenticate?username=:username Retrieve a valid user token
 @apiGroup User
 
 @apiUse json
+@apiHeader {String} Authorization The encoded user password
 
 @apiParam {String} username The user username
-@apiParam {String} password The user password
 
 @apiSuccess {json} 200 Returns an access token for that user
 @apiSuccessExample {json} User token:
@@ -136,11 +136,12 @@ HTTP/1.1 201 Created
 
 ###
 @apiName ConnectGame
-@api {get} /games/authenticate?gameId=:gameId&password=:password Retrieve a valid game token
+@api {get} /games/authenticate?gameId=:gameId Retrieve a valid game token
 @apiGroup Game
 
 @apiUse json
 @apiUse userRes
+@apiHeader {string} Authorization The encoded game password
 
 @apiParam {String} gameId The game id
 @apiParam {String} [password] The game password
@@ -199,7 +200,7 @@ HTTP/1.1 200 OK
 
 ###
 @apiName DeleteGame
-@api {delete} /games/:gameId
+@api {delete} /games/:gameId Delete a game
 @apiGroup Game
 
 @apiUse json
@@ -207,9 +208,9 @@ HTTP/1.1 200 OK
 
 @apiParam {String} gameId The game id
 
-@apiSuccess {json} 200
-@apiSuccessExample {json} Delete response:
-HTTP/1.1 200 OK
+@apiSuccess {json} 204
+@apiSuccessExample {json} No Content:
+HTTP/1.1 204 No Content
 null
 
 @apiError {json} 401 Unauthorized: a wrong token is given
@@ -220,7 +221,7 @@ null
 
 ###
 @apiName JoinGame
-@api {put} /games/:gameId/join Join a game
+@api {patch} /games/:gameId/join Join a game
 @apiGroup Game
 
 @apiUse json
@@ -230,9 +231,7 @@ null
 @apiParam {String} userId The user id
 
 @apiSuccess {json} 200
-@apiSuccessExample {json} No content:
-HTTP/1.1 200 OK
-null
+@apiUse gameSuccess
 
 @apiError {json} 401 Unauthorized: a wrong token is given
 @apiError {json} 403 Forbidden: the game is already full
@@ -243,7 +242,7 @@ null
 
 ###
 @apiName InvadeTile
-@api {put} /games/:gameId/invade Invade an available tile
+@api {patch} /games/:gameId/invade Invade an available tile
 @apiGroup Game
 
 @apiUse json
@@ -255,12 +254,29 @@ null
 @apiParam {Number} units The number of units
 
 @apiSuccess {json} 200
-@apiSuccessExample {json} No content:
-HTTP/1.1 200 OK
-null
+@apiUse gameSuccess
 
 @apiError {json} 400 Bad Request: the tile is invalid or the amount of units is invalid
 @apiError {json} 401 Unauthorized: a wrong token is given
 @apiUse error
 @apiVersion 0.0.1
+###
+
+###
+@apiName Logout
+@api {delete} /logout Remove cookies to logout
+@apiGroup user
+
+@apiUse json
+@apiUse userRes
+
+@apiSuccess {json} 204
+@apiSuccessExample {json} No Content:
+HTTP/1.1 204 No Content
+null
+
+@apiError {json} 400 Bad Request: There's no cookie to remove
+@apiError {json} 401 Unauthorized: a wrong token is given
+@apiUse error
+@apiVersion 0.0.2
 ###
