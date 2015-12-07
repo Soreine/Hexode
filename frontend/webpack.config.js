@@ -1,5 +1,5 @@
 var webpack = require('webpack')
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 module.exports = {
     entry: [
@@ -16,7 +16,7 @@ module.exports = {
                 loader: 'react-hot!babel'
             },
             {
-                test:/\.svg$/,
+                test: /\.svg$/,
                 loader: 'file-loader'
             },
             {
@@ -35,11 +35,14 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin("[name].css"),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.ProvidePlugin({
+            'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+        })
     ],
     devServer: {
         contentBase: './dist',
         historyApiFallback: true,
         hot: true
     }
-};
+}
