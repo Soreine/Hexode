@@ -1,6 +1,5 @@
-import mongo from '../db'
-import utils from '../utils'
-import crypto from 'crypto'
+const mongo = require('../db')
+const utils = require('../utils')
 
 /**
  * User :: {
@@ -38,7 +37,7 @@ function saveUser(user) {
 }
 
 /** String -> String -> Promise({id, username, token : String}, Error) */
-export function register(username, password) {
+exports.register = function register(username, password) {
     userExist(username)
         .then(exist => exist ?
             Promise.reject("The user already exist") :
