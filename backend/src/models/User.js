@@ -43,9 +43,4 @@ exports.register = function register(username, password) {
             Promise.reject("The user already exist") :
             Promise.resolve(createUser(username, password)))
         .then(saveUser)
-        .then(user => ({
-            id: user.id,
-            username: user.username,
-            token: utils.genToken(user)
-        }))
 }
