@@ -1,5 +1,6 @@
 import mongo from '../db'
 import utils from '../utils'
+import crypto from 'crypto'
 
 /**
  * User :: {
@@ -15,7 +16,7 @@ function createUser(username, password) {
     return {
         "id": utils.UUID(),
         "username": username,
-        "password": utils.HMAC256(password, password),
+        "password": crypto.createHmac('sha256', password).update(password).digest('base64'),
         "createdAt": Date.now()
     }
 }
