@@ -14,5 +14,4 @@ mongodb.close = db => {
     }
 }
 
-
 module.exports = mongodb
