@@ -39,9 +39,9 @@ function saveUser(user) {
 
 /** String -> String -> Promise({id, username, token : String}, Error) */
 exports.register = function register(username, password) {
-    userExist(username)
+    return userExist(username)
         .then(exist => exist ?
-            Promise.reject("The user already exist") :
-            Promise.resolve(createUser(username, password)))
+                Promise.reject("The user already exist") :
+                Promise.resolve(createUser(username, password)))
         .then(saveUser)
 }
