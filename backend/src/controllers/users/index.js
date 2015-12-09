@@ -17,5 +17,5 @@ exports.register = function register (req, res, next) {
             res.status(201)
             res.json(data)
         })
-        .catch(next)
+        .catch(err => next(ERRORS.REGISTRATION_FAILED(err)))
 }

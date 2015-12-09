@@ -6,6 +6,18 @@ const NOT_FOUND = 404
 exports.MISSING_PARAMETERS = function (...params) {
     return {
         code: BAD_REQUEST,
-        message: "missing mandatory parameter in " + params.join(", ")
+        message: "missing mandatory parameter(s)",
+        details: params.join(", ")
+    }
+}
+
+exports.REGISTRATION_FAILED = function (msg) {
+    return {
+        code: BAD_REQUEST,
+        message: "Unable to register the user",
+        details: typeof msg === 'string' ?
+            msg : typeof msg === 'object' && msg.toString ?
+            msg.toString() :
+            JSON.stringify(msg)
     }
 }
