@@ -1,4 +1,5 @@
 const CONFIG = require('./config')
+const crypto = require('crypto')
 
 /** () -> String */
 exports.UUID = function UUID() {
