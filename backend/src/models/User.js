@@ -16,7 +16,7 @@ function createUser(username, password) {
     return {
         "id": utils.UUID(),
         "username": username,
-        "password": crypto.createHmac('sha256', password).update(password).digest('base64'),
+        "password": utils.hashPassword(password),
         "createdAt": Date.now()
     }
 }

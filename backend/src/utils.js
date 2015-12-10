@@ -15,3 +15,11 @@ exports.genToken = function genToken(user) {
     cypher.update(user.id + "|" + (Date.now() + CONFIG.EXPIRATION_DELAY), 'utf8', 'base64')
     return cypher.final('base64')
 }
+
+/**
+ * Encrypt a plain-text password with itself and returns its base64 representation
+ * String -> String
+ */
+exports.hashPassword = function hashPassword (password) {
+    return crypto.createHmac('sha256', password).update(password).digest('base64')
+}
