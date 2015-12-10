@@ -211,8 +211,8 @@ We'll thereby represent boards as JSON objects of the following shape:
 
 ## Routing
 
-All routes are detailed in the [API documention](http://ktorzpersonal.github.io/Hexode).
-Neverthless, a special behavior is associated to the default route `/`: this endpoint serves
+All routes are detailed in the [API documentation](http://ktorzpersonal.github.io/Hexode).
+Nevertheless, a special behavior is associated to the default route `/`: this endpoint serves
 the application client. The latter is handling all further communications with the application
 backend. In fact, any other endpoints will be JSON-formatted responses (assuming that the
 client is providing the right `X-Requested-With` header (without an appropriate header, the
@@ -225,8 +225,8 @@ event messages through a socket on which is listening the game client. Events mi
 data giving details about the nature of the event. Except for the connexion and deconnexion
 events, all events are being emitted from the server to the clients. Events are detailed below.
 
-As a matter of fact, the server is in charge of sending events only to the effetive recipients.
-Plus, it will also buffer emitted event is one the client isn't reachable at the emission time.
+As a matter of fact, the server is in charge of sending events only to the effective recipients.
+Plus, it will also buffer emitted event if one the clients is unreachable at the emission time.
 Once every client is reachable, buffered events should be consumed in the same order with a
 small delay.
 
