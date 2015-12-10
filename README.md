@@ -11,13 +11,12 @@ Concept
 Rules are simple. Two players are trying to take control of a randomly generated map, divived
 in hexagonal zones.
 
-To do so, each player plays turn by turn a same amount of turns.
-Both players start with a given amount of entities, say 50. The number of total turns is
-determined by advance and known of both players. Players take turn and place a
-given number of entity on a free zone. A zone without any entity on it is a free zone. A minimum of
-1 entity and a maximum of 6 entities could be placed. Players can skip their turns as they please.
+To do so, each player plays turn by turn a same amount of turns.  Both players start with a given
+amount of entities, say 50. The number of total turns is determined by advance and known of both
+players. A player on his turn must place a given number of entity on a free zone. A zone without any
+entity on it is a free zone. Between 1 and 6 entities can be placed.
 
-Once the player has made a move, the game will evolve accordingly to three rules, in that order:
+Once the player made a move, the game will evolve following three steps:
 
 - The selected zone now belongs to the player which did the move. This should be clearly
   identified by a color, a marker or whatever
