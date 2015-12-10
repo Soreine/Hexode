@@ -92,58 +92,59 @@ Application
 
 ### Registration
 
-In order to access the content of the application as the lobby and the game client, users have
+In order to access the content of the application, such as the lobby and the game client, users have
 to register and authenticate themselves. The authentication is done using an username and a
 repeated password. This will create an account unless the username is already taken by an
 existing user. To log in, a user would have to use those defined credentials. For the MVP,
 there is no password recovery feature, and no way to change neither the password nor the
-username. The process is really simple and should be effortless. 
+username. The process is really simple and should be effortless.
 
 ### Authentication
 
-Then, in order to login a user, the client might hit a specific endpoint of the api in order to
-retrieve an access token. That token should then be transmitted through the appropriate HTTP
-header on each request. As the client is for the moment provided by the application server on a
-special endpoint, a login "session" is terminated with that client (when the user close the
-tab or the window on its browser). 
+Then, in order to login a user, the client hits a specific endpoint of the API to
+retrieve an access token. That token must be subsequently transmitted through the appropriate HTTP
+header on every request. As for now, since the client is provided by the application server on a
+specific endpoint, a login "session" is terminated by that client when the user close the
+tab or the window on its browser. 
 
 ### Lobby
 
 In its minimalist form, the lobby is a list of available games, with means to create a new game
-that will be added to the list. A game might be deleted by any user that has joined the game
-and unless the game has started (meaning that, in the case of a two players game, only the
-first one - aka the creator - is able to delete the game). 
-By the way, when a game is created, the user responsible for the creation is automatically made
-a participant of that game (sending a join request will have no effect, the player has already
-joined the game).
+that will be added to the list. A user can delete a game if he is the only one present and the game hasn't started.
+
+### Create a game
+
+Creating a game requires to provide a name and an optional password. When the game is created, the
+creator of the game is automatically made a participant of that game. Sending a join request will
+have no effect because the creator has already joined the game.
 
 ### Join a game
 
-When a game is created, it is stored inside a database. In order to perform operations on a
-game, the client needs to require an access token for that game in the similar way of what it
-is doing for the user authentication. The api will then need to provide that token as an
-authorization.  Requesting a token does not have any impact on the game object though. 
+When a game is created, it is stored inside a database. In order to perform operations on a game,
+the client needs to retrieve the game's access token, the same way it is done for user
+authentication. The API requires that token as an authorization. Requesting a token does not modify
+game.
 
 ### Play a game
 
-Once a client is in possesson of a game token, it is able to send request that will change the
+Once in possession of the game's token, the client is able to send requests that will change the
 state of a game. Those actions are parts of the API and can be reached as well through HTTP. 
 Then, when making a change to a given game entity the server might also emit some event through
-a socket bound a defined port. Events are split into channels and does not interfer - a channel
-being nothing more than a game id. Several client might be listening on a channel and are then
+a socket bound to a defined port. Events are split into channels and do not interfer -- a channel
+being nothing more than a game id. Several clients might be listening on a channel and are then
 able to update their states accordingly. Events are detailed in the next section.
 
-### Game details
+### Game types
 
-In order to keep it simple for the MVP, all games will firstly be shaped the same way. Meaning
-that tiles belong to a predefined place accordingly to their id / position. The number of units
-available units is fixed to 21 (1+2+3+4+5+6), the number of rounds to 12 as well as the number
-of tiles. Players have to play all of their units in 6 rounds each (the player starting being
-choosen randomly) in such a way that they cannot play twice the same amount of units in a same
-game (they will have to play once 1 unit, once 2 units, etc...). 
-The game can start only when two players have joined. If one player is disconnected, the game
-will be paused until the player recovers its access. Once the game is over, no more action can
-be performed on the game. 
+For the MVP, all games are shaped the same way. The arrangement of tiles is always the same. The
+number of available units is fixed to 21 (1+2+3+4+5+6), the number of rounds to 6 (6 turns for both
+players), and the number of tiles to 12. Players cannot play twice the same amount of units during a
+game (they must play each amount between 1 and 6 once and only once). Thus players will have played
+all of their units at the end of the game.
+
+The game can only start when two players have joined. If a player is disconnected, the game is
+paused until the player reconnects. Once the game is over, no more action can be performed on the
+game.
 
 Backend
 =======
