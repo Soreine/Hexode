@@ -219,7 +219,6 @@ client is providing the right `X-Requested-With` header (without an appropriate 
 application will just fail with an appropriate message and header).
 
 ## Events
-
 In order to communicate changes to several clients, the server is able to send small
 event messages through a socket on which is listening the game client. Events might contain
 data giving details about the nature of the event. Except for the connexion and deconnexion
@@ -232,11 +231,17 @@ small delay.
 
 Here they are:
 
-| event      | params                                                    | description                               |
-|------------+-----------------------------------------------------------+-------------------------------------------|
-| start      | `()`                                                      | Sent when the game could start            |
-| disconnect | `{ tileId: <String> }`                                    | Sent after a player has been disconnected |
-| move       | `{ tileId: <Number>, units: <Number>, userId: <String> }` | Sent when a player makes a move           |
+- Name: start
+- Params: `()`
+- Description: Sent when the game could start
+
+- Name: disconnect
+- Params: `{ tileId: <String> }`
+- Description: Sent after a player has been disconnected
+
+- Name: move
+- Params: `{ tileId: <Number>, units: <Number>, userId: <String> }`
+- Description: Sent when a player makes a move
 
 ## Application structure
 
