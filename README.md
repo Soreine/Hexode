@@ -9,12 +9,13 @@ Concept
 
 ### Rules
 Rules are simple. Two players are trying to take control of a randomly generated map, divived
-in hexagonal zones. 
+in hexagonal zones.
+
 To do so, each player plays turn by turn a same amount of turns.
 Both players start with a given amount of entities, say 50. The number of total turns is
-determined by advance and known of both players. At each turn, a player may choose to place a
-given number of entity on a free zone (meaning that no other entity is already occupying the
-zone). A minimum of 1 entity and a maximum of 6 entities could be placed. 
+determined by advance and known of both players. Players take turn and place a
+given number of entity on a free zone. A zone without any entity on it is a free zone. A minimum of
+1 entity and a maximum of 6 entities could be placed. Players can skip their turns as they please.
 
 Once the player has made a move, the game will evolve accordingly to three rules, in that order:
 
@@ -25,11 +26,10 @@ Once the player has made a move, the game will evolve accordingly to three rules
   strictly lower than the played zone's amount of entity is converted to the player which did
   the move, including the entities that are on the zone
 
-- The played zone may also transfer one entity to each adjacent zone that was controlled by the
-  player before making the move (the newly converted zones are not concerned). This is done for
-  each adjacent zone or until there is only one entity remaining on the current zone. The
-  reinforcement will be made starting by the zone in the upper right corner and doing a
-  clockwise turn around the zone. 
+- The played zone transfers one entity to each adjacent zone that was controlled by the player
+  before making the move (the newly converted zones are not concerned). Adjacent zones are
+  reinforced clockwise until they all have been reinforced or only one entity remains on the
+  played zone.
 
 The game is over when all turns have been played, even if a player might still possess unplayed
 entities. The score is computed depending on two things: 
