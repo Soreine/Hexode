@@ -11,7 +11,7 @@ exports.register = function register (req, res, next) {
         .then(user => ({
             id: user.id,
             username: user.username,
-            token: utils.genToken(user)
+            token: utils.genToken(user.id)
         }))
         .then(data => {
             res.status(201)

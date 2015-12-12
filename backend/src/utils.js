@@ -9,11 +9,31 @@ exports.UUID = function UUID() {
     })
 }
 
-/** User -> String */
-exports.genToken = function genToken(user) {
-    let cypher = crypto.createCipher('aes256', CONFIG.SECRET_KEY)
-    cypher.update(user.id + "|" + (Date.now() + CONFIG.EXPIRATION_DELAY), 'utf8', 'base64')
-    return cypher.final('base64')
+/**
+ * Generates a token containing the given data, along with an
+ * expiration date.
+ * String -> String
+ */
+exports.genToken = function genToken(data) {
+    let cipher = crypto.createCipher('aes256', CONFIG.SECRET_KEY)
+    cipher.update(data + "|" + (Date.now() + CONFIG.EXPIRATION_DELAY), 'utf8', 'base64')
+    return cipher.final('base64')
+}
+
+/**
+ * Decrypts a token and returns the contained data and its
+ * expiration date in ms from Epoch.
+ * String -> {data: String, expiration: Number }
+ */
+exports.readToken = function readToken(token) {
+    let decipher = crypto.createDecipher('aes256', CONFIG.SECRET_KEY)
+    decipher.update(token, 'base64', 'utf8')
+    let plaintext = decipher.final('utf8')
+    let [data, expiration] = plaintext.split('|')
+    return {
+        data,
+        expiration: parseInt(expiration, 10)
+    }
 }
 
 /**
