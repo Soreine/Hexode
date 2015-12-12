@@ -28,6 +28,7 @@
  * () -> Board
  */
 export.createStandard = function createStandard() {
+    return "Trust me, I am a standard board"; // TODO
 }
 
 /*

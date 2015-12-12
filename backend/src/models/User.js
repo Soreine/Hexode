@@ -21,11 +21,17 @@ function createUser(username, password) {
     }
 }
 
+/** String -> Promise(User, Error) */
+function findUserByName(username) {
+    return mongo.connect()
+        .then(db => db.collection('users')
+              .findOne({ username })
+              .then(mongo.close(db)))
+}
+
 /** String -> Promise(Boolean, Error) */
 function userExist(username) {
-    return mongo.connect()
-        .then(db => db.collection('users').findOne({ username })
-        .then(mongo.close(db)))
+    return findUserByName(username)
         .then(user => user != null)
 }
 

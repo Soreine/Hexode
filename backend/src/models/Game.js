@@ -35,7 +35,6 @@ function createGame(name, password) {
     } else {
         return game
     }
-
 }
 
 /** String -> Promise(Boolean, Error) */
