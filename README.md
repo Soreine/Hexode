@@ -211,7 +211,7 @@ We'll thereby represent boards as JSON objects of the following shape:
 
 ## Routing
 
-All routes are detailed in the [API documentation](http://ktorzpersonal.github.io/Hexode).
+All routes are detailed in the [API documentation](http://14plumes.github.io/Hexode).
 Nevertheless, a special behavior is associated to the default route `/`: this endpoint serves
 the application client. The latter is handling all further communications with the application
 backend. In fact, any other endpoints will be JSON-formatted responses (assuming that the
