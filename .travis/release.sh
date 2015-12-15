@@ -13,13 +13,13 @@ git remote add deploy https://$GH_USER:$GH_TOKEN@github.com/$GH_REMOTE/$GH_REPO.
 # Do the build commit
 git checkout --orphan build-$VERSION
 git reset
-git add backend/dist
+git add -f backend/dist
 git commit -m "Travis Build"
 
 git checkout --orphan gh-pages
 git reset
-git add backend/reports
-git add backend/api
+git add -f backend/reports
+git add -f backend/api
 git commit -m "Travis Build"
 
 # Silent push to avoid the token to be shown in the console ^.^
