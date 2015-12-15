@@ -153,6 +153,7 @@ Backend
 
 ### User
 
+```
 |-----------+--------+------------------------------------------------|
 | name      | type   | comment                                        |
 |-----------+--------+------------------------------------------------|
@@ -162,9 +163,11 @@ Backend
 | createdAt | Date   | The date the user registered                   |
 | updatedAt | Date   | Updated each time the user connect to the game |
 |-----------+--------+------------------------------------------------|
+```
 
 ### Game
 
+```
 |-----------+---------+-------------------------------------------------------------------|
 | name      | type    | comment                                                           |
 |-----------+---------+-------------------------------------------------------------------|
@@ -175,6 +178,7 @@ Backend
 | createdAt | Date    | The date the game was created, in ms since Epoch                  |
 | deleted   | Boolean | Games won't be deleted. This bool would rater be set.             |
 |-----------+---------+-------------------------------------------------------------------|
+```
 
 ### Board 
 
