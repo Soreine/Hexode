@@ -19,7 +19,7 @@ git commit -m "Travis Build"
 git checkout --orphan gh-pages
 git reset
 git add backend/reports
-git add backend/doc/generated
+git add backend/api
 git commit -m "Travis Build"
 
 # Silent push to avoid the token to be shown in the console ^.^
