@@ -16,16 +16,22 @@ function createUser(username, password) {
     return {
         "id": utils.UUID(),
         "username": username,
-        "password": crypto.createHmac('sha256', password).update(password).digest('base64'),
+        "password": utils.hashPassword(password),
         "createdAt": Date.now()
     }
 }
 
+/** String -> Promise(User, Error) */
+function findUserByName(username) {
+    return mongo.connect()
+        .then(db => db.collection('users')
+              .findOne({ username })
+              .then(mongo.close(db)))
+}
+
 /** String -> Promise(Boolean, Error) */
 function userExist(username) {
-    return mongo.connect()
-        .then(db => db.collection('users').findOne({ username })
-        .then(mongo.close(db)))
+    return findUserByName(username)
         .then(user => user != null)
 }
 
