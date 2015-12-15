@@ -13,7 +13,7 @@ git remote add deploy https://$GH_USER:$GH_TOKEN@github.com/$GH_REMOTE/$GH_REPO.
 # Do the build commit
 git checkout --orphan build-$VERSION
 git reset
-git add -f backend/dist
+git add -f backend/dist backend/server.js backend/package.json backend/npm_global_module_list
 git commit -m "Travis Build"
 
 git checkout --orphan gh-pages
