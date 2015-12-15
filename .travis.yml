@@ -21,4 +21,5 @@ script:
     - npm --prefix backend run eslint
 
 after_script:
+    - source .travis/version.sh
     - source .travis/release.sh
