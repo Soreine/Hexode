@@ -8,7 +8,7 @@ const app = express()
 app.use(bodyParser.json())
 
 app.use(router)
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     res.status(err.code)
     res.json(err)
 })

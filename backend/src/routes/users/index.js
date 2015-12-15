@@ -2,7 +2,6 @@ const express = require('express')
 const ERRORS = require('../../errors')
 const User = require('../../models/User')
 const utils = require('../../utils')
-
 const router = express.Router()
 
 router.post('/', register)

@@ -2,10 +2,9 @@ const express = require('express')
 const ERRORS = require('../../errors')
 const Game = require('../../models/Game')
 const utils = require('../../utils')
-
 const router = express.Router()
 
-router.delete('/:gameId', delete)
+// router.delete('/:gameId', deleteGame)
 
 /*
  * Header:
@@ -19,9 +18,9 @@ router.delete('/:gameId', delete)
 router.post('/', create)
 function create (req, res, next) {
     const { name, password } = req.body
-    const userToken = req.get("Authorization")
-    const {username, expiration} = utils.readToken(userToken)
     // TODO check token validity, maybe by adding a middleware
+    const userToken = req.get("Authorization") // eslint-disable-line
+    const {username, expiration} = utils.readToken(userToken) // eslint-disable-line
     if (!name) {
         next(ERRORS.MISSING_PARAMETERS('name'))
     } else {
@@ -36,9 +35,11 @@ function create (req, res, next) {
     }
 }
 
+/*
 router.put('/:gameId/invade', invadeTile)
 router.put('/:gameId/join', join)
 router.get('/:gameId', retrieveState)
 router.get('/', listOngoing)
+*/
 
 module.exports = router

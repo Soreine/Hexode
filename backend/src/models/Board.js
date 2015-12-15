@@ -23,22 +23,26 @@
  * }
  */
 
+/* eslint-disable */
+
 /*
  * Creates a standard board for MVP
  * () -> Board
  */
-export.createStandard = function createStandard() {
+exports.createStandard = function createStandard() {
     return "Trust me, I am a standard board"; // TODO
 }
 
 /*
  * Board -> String
  */
-export.serialize = function serialize(board) {
+exports.serialize = function serialize(board) {
 }
 
 /*
  * String -> Board
  */
-export.deserialize = function serialize(board) {
+exports.deserialize = function serialize(board) {
 }
+
+/* eslint-enable */

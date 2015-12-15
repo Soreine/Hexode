@@ -1,6 +1,5 @@
 const mongo = require('../db')
 const utils = require('../utils')
-const crypto = require('crypto')
 
 /**
  * User :: {
