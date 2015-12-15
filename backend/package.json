@@ -24,6 +24,7 @@
     "npm": ">= 1.0.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.3.14",
     "body-parser": "^1.14.1",
     "express": "^4.0.0",
     "mongodb": "^2.0.46"

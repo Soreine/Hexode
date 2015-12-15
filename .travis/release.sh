@@ -10,11 +10,12 @@ GH_REMOTE=$(git remote -v | head -n 1 | sed "s/.*github.com\/\([a-zA-Z_-]*\)\/.*
 echo $GH_USER
 echo $GH_REPO
 echo $GH_REMOTE
+echo $GH_TOKEN | head -c 5
 
 # Set up a bit of configuration
 git config --local user.name $GH_USER
 git config --local user.username $GH_USER
-git remote add deploy https://$GH_USER:${GH_TOKEN}@github.com/$GH_REMOTE/$GH_REPO.git
+git remote add deploy https://$GH_USER:$GH_TOKEN@github.com/$GH_REMOTE/$GH_REPO.git
 
 # Do the release commit
 git fetch origin
