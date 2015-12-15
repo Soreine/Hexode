@@ -11,14 +11,17 @@ git config --local user.username $GH_USER
 git remote add deploy https://$GH_USER:$GH_TOKEN@github.com/$GH_REMOTE/$GH_REPO.git
 
 # Do the build commit
-git fetch origin
-if [ $(git branch -a | grep "remotes/origin/build-$VERSION") ]; then
-    git checkout "build-$VERSION"
-else
-    git checkout -b "build-$VERSION"
-fi
-git add .
+git checkout --orphan build-$VERSION
+git reset
+git add backend/dist
+git commit -m "Travis Build"
+
+git checkout --orphan gh-pages
+git reset
+git add backend/reports
+git add backend/doc/generated
 git commit -m "Travis Build"
 
 # Silent push to avoid the token to be shown in the console ^.^
-git push deploy build-$VERSION </dev/null >/dev/null 2>/dev/null
+git push -f deploy build-$VERSION </dev/null >/dev/null 2>/dev/null
+git push -f deploy gh-pages </dev/null >/dev/null 2>/dev/null
