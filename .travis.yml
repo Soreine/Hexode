@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+    - "4"
+
+branches:
+    only:
+        - develop
+env:
+    global:
+        - PATH=${PATH}:node_modules/.bin
+
+install:
+    - npm install backend
+
+before_script:
+    - npm --prefix backend run build
+    - npm --prefix backend run start&
+
+script:
+    - npm --prefix backend run test
+    - npm --prefix backend run eslint
+
+after_script:
+    - source .travis/release.sh
