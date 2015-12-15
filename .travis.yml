@@ -10,7 +10,7 @@ env:
         - PATH=${PATH}:node_modules/.bin
 
 install:
-    - npm install backend
+    - npm --prefix backend install
 
 before_script:
     - npm --prefix backend run build
