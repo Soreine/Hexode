@@ -153,32 +153,24 @@ Backend
 
 ### User
 
-```
-|-----------+--------+------------------------------------------------|
-| name      | type   | comment                                        |
-|-----------+--------+------------------------------------------------|
-| id        | String | A user unique identifier in [a-Z0-9]           |
-| username  | String | Also unique but with utf-8 characters          |
-| password  | String | Encrypted user password                        |
-| createdAt | Date   | The date the user registered                   |
-| updatedAt | Date   | Updated each time the user connect to the game |
-|-----------+--------+------------------------------------------------|
-```
+name       |  type   | comment
+-----------|---------|--------
+id         | String  | A user unique identifier in [a-Z0-9]
+username   | String  | Also unique but with utf-8 characters
+password   | String  | Encrypted user password
+createdAt  | Date    | The date the user registered
+updatedAt  | Date    | Updated each time the user connect to the game
 
 ### Game
 
-```
-|-----------+---------+-------------------------------------------------------------------|
-| name      | type    | comment                                                           |
-|-----------+---------+-------------------------------------------------------------------|
-| id        | String  | A unique game identifier in [a-Z0-9]                              |
-| name      | String  | The name of the game given by its creator                         |
-| password  | String  | Encrypted game password                                           |
-| board     | String  | A serialized version of the board. The process is described below |
-| createdAt | Date    | The date the game was created, in ms since Epoch                  |
-| deleted   | Boolean | Games won't be deleted. This bool would rater be set.             |
-|-----------+---------+-------------------------------------------------------------------|
-```
+name       |  type   | comment
+-----------|---------|--------
+id         | String  | A unique game identifier in [a-Z0-9]
+name       | String  | The name of the game given by its creator
+password   | String  | Encrypted game password
+board      | String  | A serialized version of the board. The process is described below
+createdAt  | Date    | The date the game was created, in ms since Epoch
+deleted    | Boolean | Games won't be deleted. This bool would rather be set.
 
 ### Board 
 
