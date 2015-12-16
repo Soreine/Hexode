@@ -7,7 +7,7 @@ describe('Test 1', function () {
 })
 
 describe('Test 2', function () {
-    it("Should pass", function () {
-        assert.equal(true, true)
+    it("Should not pass", function () {
+        assert.equal(true, false)
     })
 })
