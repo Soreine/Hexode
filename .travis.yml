@@ -8,6 +8,11 @@ branches:
 env:
     global:
         - PATH=${PATH}:node_modules/.bin
+        - BUILD_FILES="backend/dist backend/server.js backend/package.json backend/npm_global_module_list"
+        - REPORT_FILES="backend/api backend/reports"
+
+before_install:
+    - source .travis/prepare_git.sh
 
 install:
     - npm --prefix backend install
@@ -21,6 +26,9 @@ script:
     - npm --prefix backend run eslint
     - npm --prefix backend run doc
 
-after_script:
+after_success:
     - source .travis/version.sh
     - source .travis/release.sh
+
+after_script:
+    - source .travis/publish_reports.sh
