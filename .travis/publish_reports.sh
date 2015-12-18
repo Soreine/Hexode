@@ -14,3 +14,6 @@ git commit -m "Travis Reports #$TRAVIS_BUILD_NUMBER"
 
 # Silent push to avoid the token to be shown in the console ^.^
 git push deploy gh-pages </dev/null >/dev/null 2>/dev/null
+
+git status
+git log HEAD~3..
