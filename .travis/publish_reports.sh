@@ -22,4 +22,6 @@ fi
 git push deploy gh-pages </dev/null >/dev/null 2>/dev/null
 
 git status
-git log HEAD~3..
+git log origin/gh-pages
+git log gh-pages
+git log deploy/gh-pages

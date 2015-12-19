@@ -2,6 +2,9 @@
 
 # run prepare_git before
 
+# No build on a PR
+if [ $TRAVIS_PULL_REQUEST ]; then exit 0; fi
+
 # Do the build commit
 git checkout --orphan build-$VERSION
 git reset
