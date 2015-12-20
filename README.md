@@ -3,11 +3,14 @@
     <img src="https://travis-ci.org/14Plumes/Hexode.svg" />
 </p>
 
+
 ![hexode](images/hexode.png)
 
 --------------------------------
 
-![technologies](images/logos.png)
+<p align="center">
+    <img src="images/logos.png" />
+</p>
 
 --------------------------------
 
