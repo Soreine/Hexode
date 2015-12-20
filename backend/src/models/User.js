@@ -28,8 +28,23 @@ function findUserByName(username) {
               .then(mongo.close(db)))
 }
 
+/** String -> String -> Promise((), Error) */
+function ensureParams (username, password) {
+    if (!/^[\w-]{4,}$/.test(username)) {
+        return Promise.reject("Invalid username")
+    }
+
+    // https://github.com/mathiasbynens/regenerate
+    // Allow any string that is at least 4-length long with any unicode char
+    if (!/([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){4,}/.test(password)) {
+        return Promise.reject("Invalid password")
+    }
+
+    return Promise.resolve()
+}
+
 /** String -> Promise(Boolean, Error) */
-function userExist(username) {
+function userExists(username) {
     return findUserByName(username)
         .then(user => user != null)
 }
@@ -44,9 +59,10 @@ function saveUser(user) {
 
 /** String -> String -> Promise({id, username, token : String}, Error) */
 exports.register = function register(username, password) {
-    return userExist(username)
+    return ensureParams(username, password)
+        .then(() => userExists(username))
         .then(exist => exist ?
-                Promise.reject("The user already exist") :
-                Promise.resolve(createUser(username, password)))
+            Promise.reject("The user already exist") :
+            Promise.resolve(createUser(username, password)))
         .then(saveUser)
 }
