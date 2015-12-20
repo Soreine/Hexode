@@ -2,16 +2,17 @@ const mongo = require('mongodb')
 const http = require('http')
 
 /** (mongo.db -> Promise) -> () */
-exports.mongo = function (action) {
-    mongo.MongoClient
+exports.mongo = function (actions) {
+    if (!Array.isArray(actions)) { actions = [actions] }
+    return mongo.MongoClient
          .connect("mongodb://localhost:27017/hexode")
-         .then(db => {
-            action(db).catch(e => {
+         .then(db => actions
+            .reduce((next, action) => next.then(() => action(db)), Promise.resolve())
+            .then(() => db.close())
+            .catch(e => {
                 db.close()
                 throw e
-            })
-         })
-         .catch(e => { throw e })
+            }))
 }
 
 /** Object -> Option(Object) -> Promise({ code, result }, error) */
@@ -42,4 +43,8 @@ exports.request = function (options, data) {
         data && req.write(JSON.stringify(data))
         req.end()
     })
+}
+
+exports.after = function (n, f) {
+    return () => --n === 0 && f()
 }
