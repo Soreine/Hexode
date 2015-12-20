@@ -14,7 +14,8 @@ function register(req, res, next) {
             .then(user => ({
                 id: user.id,
                 username: user.username,
-                token: utils.genToken(user.id)
+                token: utils.genToken(user.id),
+                createdAt: user.createdAt
             }))
             .then(data => {
                 res.status(201)
