@@ -42,7 +42,12 @@ describe("User registration", () => {
             utils.request(endpoint, Object.assign({}, user, { username: "KtorZ" + invalidExt }))
                  .then(res => {
                      expect(res.code).to.equal(400)
-                     done()
+                     return utils.mongo(db => db.collection('users')
+                        .count({ username: user.username + invalidExt })
+                        .then(res => {
+                            expect(res).to.equal(0)
+                            done()
+                        }))
                  })
                  .catch(done)
         })
@@ -51,7 +56,12 @@ describe("User registration", () => {
             utils.request(endpoint, Object.assign({}, user, { password: "14" }))
                  .then(res => {
                      expect(res.code).to.equal(400)
-                     done()
+                     return utils.mongo(db => db.collection('users')
+                        .count({ username: user.username })
+                        .then(res => {
+                            expect(res).to.equal(0)
+                            done()
+                        }))
                  })
                  .catch(done)
         })
