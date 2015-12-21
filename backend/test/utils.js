@@ -18,30 +18,31 @@ exports.mongo = function (actions) {
 
 /** Object -> Option(Object) -> Promise({ code, result }, error) */
 exports.request = function (options, data) {
+    const headers = Object.assign({
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json'
+    }, options && options.headers || {})
+
     options = Object.assign({
         hostname: 'localhost',
         port: 8080,
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
-        }
-    }, options)
+        method: 'GET'
+    }, options, { headers })
+
     return new Promise((resolve, reject) => {
         const req = http.request(options, res => {
             var buf = ""
             res.setEncoding('utf8')
             res.on('data', b => { buf += b })
             res.on('end', () => {
-                const result = JSON.parse(buf)
                 resolve({
                     code: res.statusCode,
-                    result: result
+                    result: JSON.parse(buf)
                 })
             })
         })
         req.on('error', reject)
-        data && req.write(JSON.stringify(data))
+        ;['GET', 'DELETE'].indexOf(options.method) === -1 && data && req.write(JSON.stringify(data))
         req.end()
     })
 }
