@@ -4,7 +4,9 @@ const utils = require('./utils')
 describe("User registration", () => {
     const user = { username: "KtorZ", password: "password" }
     const invalidExt = "@%^"
-    const endpoint = { path: "/users", method: "POST" }
+
+    const REGISTER = { path: "/users", method: "POST" }
+    const AUTHENTICATE = { path: "/users/authenticate?username=" + user.username, method: "GET" }
 
     const reset = done => {
         const after = utils.after(2, done)
@@ -25,7 +27,7 @@ describe("User registration", () => {
         before(reset)
 
         it("it should be able to register that user", done => {
-            utils.request(endpoint, user)
+            utils.request(REGISTER, user)
                  .then(res => {
                      expect(res.code).to.equal(201)
                      expect(res.result.id).to.be.ok()
@@ -39,7 +41,7 @@ describe("User registration", () => {
         })
 
         it("it should return an error if a wrong username is provided", done => {
-            utils.request(endpoint, Object.assign({}, user, { username: "KtorZ" + invalidExt }))
+            utils.request(REGISTER, Object.assign({}, user, { username: "KtorZ" + invalidExt }))
                  .then(res => {
                      expect(res.code).to.equal(400)
                      return utils.mongo(db => db.collection('users')
@@ -53,7 +55,7 @@ describe("User registration", () => {
         })
 
         it("it should return an error if a wrong password is provided", done => {
-            utils.request(endpoint, Object.assign({}, user, { password: "14" }))
+            utils.request(REGISTER, Object.assign({}, user, { password: "14" }))
                  .then(res => {
                      expect(res.code).to.equal(400)
                      return utils.mongo(db => db.collection('users')
@@ -67,7 +69,7 @@ describe("User registration", () => {
         })
 
         it("it should return an error if a no data are transmitted", done => {
-            utils.request(endpoint)
+            utils.request(REGISTER)
                  .then(res => {
                      expect(res.code).to.equal(400)
                      done()
@@ -77,7 +79,7 @@ describe("User registration", () => {
     })
 
     context("Given an existing user", () => {
-        before(done => {
+        beforeEach(done => {
             utils.mongo(db => db.collection('users')
                 .insertOne(user)
                 .then(() => done())
@@ -87,7 +89,7 @@ describe("User registration", () => {
         })
 
         it("it should return an error if one's try to register the same username", done => {
-            utils.request(endpoint, user)
+            utils.request(REGISTER, user)
                  .then(res => {
                      expect(res.code).to.equal(400)
                      return utils.mongo(db => db.collection('users')
@@ -98,6 +100,56 @@ describe("User registration", () => {
                         }))
                  })
                 .catch(done)
+        })
+
+        it("it should return a valid token when providing the right credentials", done => {
+            utils.request(Object.assign(AUTHENTICATE, {
+                headers: { 'Authorization': `password=${user.password}` }
+            }))
+            .then(res => {
+                expect(res.code).to.equal(200)
+                expect(res.result.token).to.be.ok()
+                expect(res.result.token).to.be.a('string')
+                expect(Object.keys(res.result).length).to.equal(1)
+                done()
+            })
+            .catch(done)
+        })
+
+        const failAuthenticate = done => res => {
+            console.log(res)
+            expect(res.code).to.equal(403)
+            expect(res.result.error).to.be.ok()
+            expect(res.result.error).to.be.a('string')
+            done()
+        }
+
+        it("it should return an error if no username is provided", done => {
+            utils.request(Object.assign(AUTHENTICATE, {
+                path: AUTHENTICATE.path.match(/^(.*)\?.*$/)[1],
+                headers: { 'Authorization': `password=${user.password}` }
+            }))
+            .then(failAuthenticate(done), done)
+        })
+
+        it("it should return an error if no password is provided", done => {
+            utils.request(AUTHENTICATE)
+            .then(failAuthenticate(done), done)
+        })
+
+        it("it should return an error if a non existing user is provided", done => {
+            utils.request(Object.assign(AUTHENTICATE, {
+                path: AUTHENTICATE.path.replace(user.username, 'qwerty'),
+                headers: { 'Authorization': `password=${user.password}` }
+            }))
+            .then(failAuthenticate(done), done)
+        })
+
+        it("it should return an error if a wrong password is provided", done => {
+            utils.request(Object.assign(AUTHENTICATE, {
+                headers: { 'Authorization': `password=${user.password}nope` }
+            }))
+            .then(failAuthenticate(done), done)
         })
     })
 })
