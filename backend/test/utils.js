@@ -7,12 +7,13 @@ exports.mongo = function (actions) {
     return mongo.MongoClient
          .connect("mongodb://localhost:27017/hexode")
          .then(db => actions
-            .reduce((next, action) => next.then(() => action(db)), Promise.resolve())
+            .reduce((p, action) => p.then(() => action(db)), Promise.resolve())
             .then(() => db.close())
             .catch(e => {
                 db.close()
-                throw e
+                return Promise.reject(e)
             }))
+        .catch(Promise.reject)
 }
 
 /** Object -> Option(Object) -> Promise({ code, result }, error) */
@@ -26,7 +27,7 @@ exports.request = function (options, data) {
             'Content-Type': 'application/json'
         }
     }, options)
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         const req = http.request(options, res => {
             var buf = ""
             res.setEncoding('utf8')
@@ -39,7 +40,7 @@ exports.request = function (options, data) {
                 })
             })
         })
-        req.on('error', e => { throw e })
+        req.on('error', reject)
         data && req.write(JSON.stringify(data))
         req.end()
     })
