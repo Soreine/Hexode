@@ -261,22 +261,3 @@ null
 @apiUse error
 @apiVersion 0.0.1
 ###
-
-###
-@apiName Logout
-@api {delete} /logout Remove cookies to logout
-@apiGroup user
-
-@apiUse json
-@apiUse userRes
-
-@apiSuccess {json} 204
-@apiSuccessExample {json} No Content:
-HTTP/1.1 204 No Content
-null
-
-@apiError {json} 400 Bad Request: There's no cookie to remove
-@apiError {json} 401 Unauthorized: a wrong token is given
-@apiUse error
-@apiVersion 0.0.2
-###
