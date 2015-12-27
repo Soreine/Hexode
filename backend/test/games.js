@@ -1,8 +1,8 @@
 const expect = require('expect.js')
 const utils = require('./utils')
 
-const CREATE = { path: "/games", method: "POST" }
-const DELETE = { path: "/games/", method: "DELETE" }
+var CREATE = { path: "/games", method: "POST" }
+var DELETE = { path: "/games/", method: "DELETE" }
 
 describe("Game lifecycle", () => {
     context("Given an authenticated user", () => {
@@ -22,6 +22,10 @@ describe("Game lifecycle", () => {
                     headers: { Authorization: `password=${user.password}` }
                 }).then(res => {
                     user = Object.assign({}, user, res.result)
+                    CREATE = Object.assign(CREATE, { headers: {
+                        'Authorization': `userToken=${user.token}` }})
+                    DELETE = Object.assign(DELETE, { headers: {
+                        'Authorization': `userToken=${user.token}` }})
                     done()
                 })
             })
@@ -56,14 +60,14 @@ describe("Game lifecycle", () => {
         }
 
         it("should be able to create a new game without any password", done => {
-            utils.request(CREATE, game)
+            utils.request(CREATE)
                  .then(checkGame)
                  .then(() => utils.mongo(
                     db => db.collection('games')
                             .findOne(game)
                             .then(res => {
                                 expect(res).to.be.ok()
-                                expect(res.password).not.to.be.ok()
+                                expect(res.result.password).not.to.be.ok()
                                 done()
                             })
                     )
@@ -79,12 +83,42 @@ describe("Game lifecycle", () => {
                             .findOne(game)
                             .then(res => {
                                 expect(res).to.be.ok()
-                                expect(res.password).to.be.a('string')
+                                expect(res.result.password).to.be.a('string')
                                 done()
                             })
                     )
                  )
                  .catch(done)
+        })
+
+        context("Given a game belonging to that user", () => {
+            before(done => {
+                utils.request(CREATE, game)
+                     .then(res => {
+                         game = res.result
+                         DELETE.path += res.result.id
+                         done()
+                     })
+                     .catch(done)
+            })
+
+            it("should be able to delete that game", done => {
+                utils.request(DELETE)
+                     .then(res => {
+                         expect(res).to.be.ok()
+                         expect(res.code).to.equal(204)
+                         expect(res.result).not.to.be.ok()
+                     })
+                     .then(() => utils.mongo(
+                         db => db.collection('games')
+                                 .findOne({ id: game.id })
+                                 .then(res => {
+                                     expect(res).not.to.be.ok()
+                                     done()
+                                 })
+                     ))
+                     .catch(done)
+            })
         })
 
         // Delete the test user
@@ -93,7 +127,7 @@ describe("Game lifecycle", () => {
                 db.collection('users')
                   .deleteOne({ username: user.username })
                   .then(() => done())
-                  .catch(Done)
+                  .catch(done)
             })
         })
     })
