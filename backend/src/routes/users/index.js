@@ -42,7 +42,7 @@ function register(req, res, next) {
  * Body: <None>
  * Response:
  *   200 (JSON) A valid auth token
- *   403 Unauthorized: Wrong credentials
+ *   403 Forbidden: Wrong credentials
  */
 router.get('/authenticate', authenticate)
 function authenticate(req, res) {
