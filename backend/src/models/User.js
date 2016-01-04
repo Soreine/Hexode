@@ -66,3 +66,15 @@ exports.register = function register(username, password) {
             Promise.resolve(createUser(username, password)))
         .then(saveUser)
 }
+
+/** String -> String -> Promise(User, String) */
+exports.login = function login(username, password) {
+    return findUserByName(username)
+        .then(user => {
+            hash = utils.hashPassword(password)
+            if (user.password !== hash) {
+                return Promise.reject("Passwords don't match")
+            }
+            return Promise.resolve(user)
+        })
+}
