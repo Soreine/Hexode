@@ -10,6 +10,12 @@ const utils = require('../utils')
  * }
  */
 
+exports.ERR_NOT_FOUND = new Error("User not found")
+exports.ERR_ALREADY_EXISTS = new Error("The user already exists")
+exports.ERR_WRONG_CREDENTIALS = new Error("Password don't match")
+exports.ERR_INVALID_USERNAME = new Error("The username is invalid")
+exports.ERR_INVALID_PASSWORD = new Error("The password is invalid")
+
 /** String -> String -> User */
 function createUser(username, password) {
     console.log("Create user", username)
@@ -30,7 +36,7 @@ function findUserByName(username) {
               .then(mongo.close(db)))
         .then(user => {
             if (user == null) {
-                return Promise.reject("User not found")
+                return Promise.reject(exports.ERR_NOT_FOUND)
             }
             return Promise.resolve(user)
         })
@@ -39,13 +45,13 @@ function findUserByName(username) {
 /** String -> String -> Promise((), String) */
 function ensureParams (username, password) {
     if (!/^[\w-]{4,}$/.test(username)) {
-        return Promise.reject("Invalid username")
+        return Promise.reject(exports.ERR_INVALID_USERNAME)
     }
 
     // https://github.com/mathiasbynens/regenerate
     // Allow any string that is at least 4-length long with any unicode char
     if (!/([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){4,}/.test(password)) {
-        return Promise.reject("Invalid password")
+        return Promise.reject(exports.ERR_INVALID_PASSWORD)
     }
 
     return Promise.resolve()
@@ -55,7 +61,13 @@ function ensureParams (username, password) {
 function userExists(username) {
     console.log("Search if user exists", username)
     return findUserByName(username)
-        .then(user => user != null)
+        .then(() => Promise.resolve(true))
+        .catch(err => {
+            if (err === exports.ERR_NOT_FOUND) {
+                return Promise.resolve(false)
+            }
+            return Promise.reject(err)
+        })
 }
 
 /** User -> Promise(User, String) */
@@ -72,18 +84,20 @@ exports.register = function register(username, password) {
     return ensureParams(username, password)
         .then(() => userExists(username))
         .then(exist => exist ?
-            Promise.reject("The user already exist") :
+            Promise.reject(exports.ERR_ALREADY_EXISTS) :
             Promise.resolve(createUser(username, password)))
         .then(saveUser)
 }
 
 /** String -> String -> Promise(User, String) */
 exports.login = function login(username, password) {
+    console.log("login", username, password)
     return findUserByName(username)
         .then(user => {
             var hash = utils.hashPassword(password)
+            console.log(user)
             if (user.password !== hash) {
-                return Promise.reject("Passwords don't match")
+                return Promise.reject(exports.ERR_WRONG_CREDENTIALS)
             }
             return Promise.resolve(user)
         })
