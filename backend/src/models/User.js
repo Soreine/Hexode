@@ -12,6 +12,7 @@ const utils = require('../utils')
 
 /** String -> String -> User */
 function createUser(username, password) {
+    console.log("Create user", username)
     return {
         "id": utils.UUID(),
         "username": username,
@@ -22,10 +23,17 @@ function createUser(username, password) {
 
 /** String -> Promise(mongo.User, String) */
 function findUserByName(username) {
+    console.log("Lookup for user", username)
     return mongo.connect()
         .then(db => db.collection('users')
               .findOne({ username })
               .then(mongo.close(db)))
+        .then(user => {
+            if (user == null) {
+                return Promise.reject("User not found")
+            }
+            return Promise.resolve(user)
+        })
 }
 
 /** String -> String -> Promise((), String) */
@@ -45,12 +53,14 @@ function ensureParams (username, password) {
 
 /** String -> Promise(Boolean, String) */
 function userExists(username) {
+    console.log("Search if user exists", username)
     return findUserByName(username)
         .then(user => user != null)
 }
 
 /** User -> Promise(User, String) */
 function saveUser(user) {
+    console.log("Save user", user)
     return mongo.connect()
         .then(db => db.collection('users').insertOne(user)
         .then(mongo.close(db)))
