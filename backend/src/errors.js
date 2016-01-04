@@ -1,5 +1,5 @@
 const BAD_REQUEST = 400
-// const UNAUTHORIZED = 401
+const UNAUTHORIZED = 401
 // const FORBIDDEN = 403
 // const NOT_FOUND = 404
 const INTERNAL_SERVER_ERROR = 500
@@ -25,6 +25,13 @@ exports.DEBUG = function (err) {
         code: INTERNAL_SERVER_ERROR,
         message: "TODO",
         details: plsStringify(err)
+    }
+}
+
+exports.WRONG_CREDENTIALS = function () {
+    return {
+        code: UNAUTHORIZED,
+        message: "Invalid credentials. Access not allowed",
     }
 }
 
