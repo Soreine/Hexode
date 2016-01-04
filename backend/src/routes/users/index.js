@@ -45,8 +45,20 @@ function register(req, res, next) {
  *   403 Forbidden: Wrong credentials
  */
 router.get('/authenticate', authenticate)
-function authenticate(req, res) {
-    res.json({ notImplemented: "yet" })
+function authenticate(req, res, next) {
+    authorize = req.get("Authorization")
+    if (!authorize) { return next(ERRORS.WRONG_CREDENTIALS()) }
+    password = authorize.match(/^password=(.+)$/)
+    if (!password) { return next(ERRORS.WRONG_CREDENTIALS()) }
+    if (!req.params.username) { return next(ERRORS.WRONG_CREDENTIALS()) }
+    User.login(req.params.username, password[1])
+        .then(user => {
+            res.status(200)
+            res.json({
+                token: utils.genToken(user.id),
+            })
+        })
+        .catch(() => next(ERRORS.WRONG_CREDENTIALS()))
 }
 
 
