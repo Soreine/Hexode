@@ -1,6 +1,6 @@
 const BAD_REQUEST = 400
 const UNAUTHORIZED = 401
-// const FORBIDDEN = 403
+const FORBIDDEN = 403
 // const NOT_FOUND = 404
 const INTERNAL_SERVER_ERROR = 500
 
@@ -30,8 +30,15 @@ exports.DEBUG = function (err) {
 
 exports.WRONG_CREDENTIALS = function () {
     return {
-        code: UNAUTHORIZED,
+        code: FORBIDDEN,
         message: "Invalid credentials. Access not allowed",
+    }
+}
+
+exports.UNAUTHORIZED = function () {
+    return {
+        code: UNAUTHORIZED,
+        message: "Valid access token required",
     }
 }
 
