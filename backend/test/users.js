@@ -80,12 +80,9 @@ describe("User registration", () => {
 
     context("Given an existing user", () => {
         beforeEach(done => {
-            utils.mongo(db => db.collection('users')
-                .insertOne(user)
-                .then(() => done())
-                .catch(done)
-            )
-
+            utils.request(REGISTER, user)
+                 .then(() => done())
+                 .catch(done)
         })
 
         it("it should return an error if one's try to register the same username", done => {
@@ -117,11 +114,14 @@ describe("User registration", () => {
         })
 
         const failAuthenticate = done => res => {
-            console.log(res)
-            expect(res.code).to.equal(403)
-            expect(res.result.error).to.be.ok()
-            expect(res.result.error).to.be.a('string')
-            done()
+            try {
+                expect(res.code).to.equal(403)
+                expect(res.result.message).to.be.ok()
+                expect(res.result.message).to.be.a('string')
+                done()
+            } catch (e) {
+                done(e)
+            }
         }
 
         it("it should return an error if no username is provided", done => {
