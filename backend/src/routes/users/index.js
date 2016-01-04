@@ -46,12 +46,12 @@ function register(req, res, next) {
  */
 router.get('/authenticate', authenticate)
 function authenticate(req, res, next) {
-    authorize = req.get("Authorization")
+    var authorize = req.get("Authorization")
     if (!authorize) { return next(ERRORS.WRONG_CREDENTIALS()) }
-    password = authorize.match(/^password=(.+)$/)
+    var password = authorize.match(/^password=(.+)$/)
     if (!password) { return next(ERRORS.WRONG_CREDENTIALS()) }
-    if (!req.params.username) { return next(ERRORS.WRONG_CREDENTIALS()) }
-    User.login(req.params.username, password[1])
+    if (!req.query.username) { return next(ERRORS.WRONG_CREDENTIALS()) }
+    User.login(req.query.username, password[1])
         .then(user => {
             res.status(200)
             res.json({

@@ -81,7 +81,7 @@ exports.register = function register(username, password) {
 exports.login = function login(username, password) {
     return findUserByName(username)
         .then(user => {
-            hash = utils.hashPassword(password)
+            var hash = utils.hashPassword(password)
             if (user.password !== hash) {
                 return Promise.reject("Passwords don't match")
             }
