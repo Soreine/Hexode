@@ -20,7 +20,7 @@ function createUser(username, password) {
     }
 }
 
-/** String -> Promise(User, Error) */
+/** String -> Promise(mongo.User, String) */
 function findUserByName(username) {
     return mongo.connect()
         .then(db => db.collection('users')
@@ -28,7 +28,7 @@ function findUserByName(username) {
               .then(mongo.close(db)))
 }
 
-/** String -> String -> Promise((), Error) */
+/** String -> String -> Promise((), String) */
 function ensureParams (username, password) {
     if (!/^[\w-]{4,}$/.test(username)) {
         return Promise.reject("Invalid username")
@@ -43,13 +43,13 @@ function ensureParams (username, password) {
     return Promise.resolve()
 }
 
-/** String -> Promise(Boolean, Error) */
+/** String -> Promise(Boolean, String) */
 function userExists(username) {
     return findUserByName(username)
         .then(user => user != null)
 }
 
-/** User -> Promise(User, Error) */
+/** User -> Promise(User, String) */
 function saveUser(user) {
     return mongo.connect()
         .then(db => db.collection('users').insertOne(user)
@@ -57,7 +57,7 @@ function saveUser(user) {
         .then(() => user)
 }
 
-/** String -> String -> Promise({id, username, token : String}, Error) */
+/** String -> String -> Promise(User, String) */
 exports.register = function register(username, password) {
     return ensureParams(username, password)
         .then(() => userExists(username))
