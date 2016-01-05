@@ -19,7 +19,7 @@ exports.mongo = function (actions) {
 /** Object -> Option(Object) -> Promise({ code, result }, error) */
 exports.request = function (options, data) {
     const headers = Object.assign({
-        'X-Requested-With': 'XMLHttpRequest',
+        'X-Requested-With': 'hexodeclient',
         'Content-Type': 'application/json'
     }, options && options.headers || {})
 

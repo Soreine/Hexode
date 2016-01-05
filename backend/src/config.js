@@ -10,7 +10,8 @@ const CONFIG = {
     //Add Static conf values here
     DB_URL: DB_URL,
     EXPIRATION_DELAY: 1000 * 60 * 60 * 24 * 30, // 30 days
-    SECRET_KEY: process.env.SECRET_KEY || "developmentKey"
+    SECRET_KEY: process.env.SECRET_KEY || "developmentKey",
+    CLIENT_FILE: process.cwd() + "/dist/client/app.html"
 }
 
 module.exports = CONFIG
