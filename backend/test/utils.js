@@ -7,40 +7,42 @@ exports.mongo = function (actions) {
     return mongo.MongoClient
          .connect("mongodb://localhost:27017/hexode")
          .then(db => actions
-            .reduce((next, action) => next.then(() => action(db)), Promise.resolve())
+            .reduce((p, action) => p.then(() => action(db)), Promise.resolve())
             .then(() => db.close())
             .catch(e => {
                 db.close()
-                throw e
+                return Promise.reject(e)
             }))
+        .catch(Promise.reject)
 }
 
 /** Object -> Option(Object) -> Promise({ code, result }, error) */
 exports.request = function (options, data) {
+    const headers = Object.assign({
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json'
+    }, options && options.headers || {})
+
     options = Object.assign({
         hostname: 'localhost',
         port: 8080,
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
-        }
-    }, options)
-    return new Promise(resolve => {
+        method: 'GET'
+    }, options, { headers })
+
+    return new Promise((resolve, reject) => {
         const req = http.request(options, res => {
             var buf = ""
             res.setEncoding('utf8')
             res.on('data', b => { buf += b })
             res.on('end', () => {
-                const result = JSON.parse(buf)
                 resolve({
                     code: res.statusCode,
-                    result: result
+                    result: JSON.parse(buf)
                 })
             })
         })
-        req.on('error', e => { throw e })
-        data && req.write(JSON.stringify(data))
+        req.on('error', reject)
+        ;['GET', 'DELETE'].indexOf(options.method) === -1 && data && req.write(JSON.stringify(data))
         req.end()
     })
 }
