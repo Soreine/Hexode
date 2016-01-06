@@ -42,7 +42,9 @@ exports.request = function (options, data) {
             })
         })
         req.on('error', reject)
-        ;['GET', 'DELETE'].indexOf(options.method) === -1 && data && req.write(JSON.stringify(data))
+        if (['GET', 'DELETE'].indexOf(options.method) === -1 && data != null) {
+            req.write(JSON.stringify(data))
+        }
         req.end()
     })
 }
