@@ -29,19 +29,12 @@ HTTP/1.1 20x OK
 {
     "id": <String>,
     "name": <String>,
-    "currentPlayerId": <String>,
-    "currentRound": <Number>,
     "createdAt": <Date>,
-    "board": {
-        "tiles": [{
-            "id": <Number>,
-            "owner": <String>,
-            "units": <Number>
-        }]
-    },
+    "deleted": <String>,
+    "board": <String>,
     "players": [{
         "id": <String>,
-        "units": <Number>
+        "username": <Number>
     }]
 }
 ###
@@ -54,19 +47,12 @@ HTTP/1.1 200 OK
     [{
         "id": <String>,
         "name": <String>,
-        "currentPlayerId": <String>,
-        "currentRound": <Number>,
         "createdAt": <Date>,
-        "board": {
-            "tiles": [{
-                "id": <Number>,
-                "owner": <String>,
-                "units": <Number>
-            }]
-        },
+        "deleted": <String>,
+        "board": <String>,
         "players": [{
             "id": <String>,
-            "units": <Number>
+            "username": <Number>
         }]
     }]
 }
