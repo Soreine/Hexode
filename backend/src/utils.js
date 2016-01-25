@@ -16,8 +16,8 @@ exports.UUID = function UUID() {
  */
 exports.genToken = function genToken(data) {
     let cipher = crypto.createCipher('aes256', CONFIG.SECRET_KEY)
-    cipher.update(data + "|" + (Date.now() + CONFIG.EXPIRATION_DELAY), 'utf8', 'base64')
-    return cipher.final('base64')
+    var ciphered = cipher.update(data + "|" + (Date.now() + CONFIG.EXPIRATION_DELAY), 'utf8', 'base64')
+    return ciphered + cipher.final('base64')
 }
 
 /**
@@ -27,11 +27,11 @@ exports.genToken = function genToken(data) {
  */
 exports.readToken = function readToken(token) {
     let decipher = crypto.createDecipher('aes256', CONFIG.SECRET_KEY)
-    decipher.update(token, 'base64', 'utf8')
-    let plaintext = decipher.final('utf8')
+    var plaintext = decipher.update(token, 'base64', 'utf8')
+    plaintext += decipher.final('utf8')
     let [data, expiration] = plaintext.split('|')
     return {
-        data,
+        data: data,
         expiration: parseInt(expiration, 10)
     }
 }
