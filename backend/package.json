@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha -R mochawesome --reporter-options=reportDir=reports",
-    "eslint": "eslint -f html -o reports/eslint.html src/*",
+    "test": "mocha --recursive --compilers js:babel-core/register -R mochawesome --reporter-options=reportDir=reports",
+    "eslint": "eslint src/ test/ -f html -o reports/eslint.html",
     "start": "./server.js",
     "doc": "apidoc -i doc -o api",
     "build": "webpack"
