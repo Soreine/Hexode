@@ -22,19 +22,19 @@ function create (req, res, next) {
         next(ERRORS.MISSING_PARAMETERS('name'))
         return
     }
-    
+
     // Parse token
     const match = /userToken=(.+)$/.exec(req.get("Authorization"))
-    if(!match) {
+    if (!match) {
         next(ERRORS.UNAUTHORIZED())
         return
     }
     const userToken = match[1]
-    
+
     // TODO check token validity : username exists
     // (should we add a middleware ?)
-    const {username, expiration} = utils.readToken(userToken)
-    if(expiration < Date.now()) {
+    const {expiration} = utils.readToken(userToken)
+    if (expiration < Date.now()) {
         next(ERRORS.UNAUTHORIZED())
         return
     }

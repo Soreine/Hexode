@@ -11,7 +11,7 @@ function authorize(request, token) {
 }
 
 describe("Game lifecycle", () => {
-    
+
     context("Given an authenticated user", () => {
         var user = { username: `KtorZ_${Date.now()}`,
                      password: 'patate',
@@ -20,7 +20,7 @@ describe("Game lifecycle", () => {
                    }
         const gameName = "KtorZ's game"
         const gamePassword = "also patate"
-        
+
         // Create and authenticate the test user
         before(done => {
             utils.request({
@@ -41,20 +41,16 @@ describe("Game lifecycle", () => {
         })
 
         afterEach(done => {
-            utils.mongo(db => {
-                db.dropCollection('games')
-                  .then(() => done())
-                  .catch(done)
-            })
+            utils.mongo(db => db.dropCollection('games')
+                .then(() => done())
+                .catch(done))
         })
 
         // Delete the test user
         after(done => {
-            utils.mongo(db => {
-                db.dropCollection('users')
-                  .then(() => done())
-                  .catch(done)
-            })
+            utils.mongo(db => db.dropCollection('users')
+                .then(() => done())
+                .catch(done))
         })
 
         function checkGame(res) {
@@ -77,13 +73,13 @@ describe("Game lifecycle", () => {
 
         it("should be able to create a new game without any password", done => {
             utils.request(authorize(CREATE, user.token), { name: gameName })
-                //.then(checkGame)
+                 //.then(checkGame)
                  .then(() => utils.mongo(
                     db => db.collection('games')
-                            .findOne(game)
+                            .findOne({ name: gameName })
                             .then(res => {
                                 expect(res).to.be.ok()
-                                expect(res.result.password).not.to.be.ok()
+                                expect(res.password).not.to.be.ok()
                                 done()
                             })
                     )
@@ -92,7 +88,7 @@ describe("Game lifecycle", () => {
         })
 
         return
-        
+
         it("should be able to create a new game with a password", done => {
             utils.request(CREATE, Object.assign({ password: "patate"}, game))
                  .then(checkGame)
