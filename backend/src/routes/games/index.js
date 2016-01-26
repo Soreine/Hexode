@@ -18,23 +18,35 @@ const router = express.Router()
 router.post('/', create)
 function create (req, res, next) {
     const { name, password } = req.body
-
-    // TODO check token validity, maybe by adding a middleware
-    const userToken = /userToken=(.+)$/.exec(req.get("Authorization"))
-    const {username, expiration} = utils.readToken(userToken)
-
     if (!name) {
         next(ERRORS.MISSING_PARAMETERS('name'))
-    } else {
-        Game.createGame(name, password)
-            // TODO automatically join the game ?
-            .then(game => {
-                res.status(201)
-                res.json(game)
-            })
-            // TODO what could happen ?
-            .catch(err => next(ERRORS.DEBUG(err)))
+        return
     }
+    
+    // Parse token
+    const match = /userToken=(.+)$/.exec(req.get("Authorization"))
+    if(!match) {
+        next(ERRORS.UNAUTHORIZED())
+        return
+    }
+    const userToken = match[1]
+    
+    // TODO check token validity : username exists
+    // (should we add a middleware ?)
+    const {username, expiration} = utils.readToken(userToken)
+    if(expiration < Date.now()) {
+        next(ERRORS.UNAUTHORIZED())
+        return
+    }
+
+    Game.registerGame(name, password)
+        // TODO automatically join the game ?
+        .then(game => {
+            res.status(201)
+            res.json(game)
+        })
+        // TODO what could happen ?
+        .catch(err => next(ERRORS.DEBUG(err)))
 }
 
 /*

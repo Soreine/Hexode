@@ -27,7 +27,7 @@ function createUser(username, password) {
     }
 }
 
-/** String -> Promise(mongo.User, String) */
+/** String -> Promise(mongo.User, Error) */
 function findUserByName(username) {
     console.log("Lookup for user", username)
     return mongo.connect()
@@ -42,15 +42,13 @@ function findUserByName(username) {
         })
 }
 
-/** String -> String -> Promise((), String) */
+/** String -> String -> Promise((), Error) */
 function ensureParams (username, password) {
     if (!/^[\w-]{4,}$/.test(username)) {
         return Promise.reject(exports.ERR_INVALID_USERNAME)
     }
 
-    // https://github.com/mathiasbynens/regenerate
-    // Allow any string that is at least 4-length long with any unicode char
-    if (!/([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){4,}/.test(password)) {
+    if (!utils.validatePassword(password)) {
         return Promise.reject(exports.ERR_INVALID_PASSWORD)
     }
 
