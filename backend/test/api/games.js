@@ -1,34 +1,39 @@
 const expect = require('expect.js')
 const utils = require('./utils')
 
-var CREATE = { path: "/games", method: "POST" }
-var DELETE = { path: "/games/", method: "DELETE" }
+const CREATE = { path: "/games", method: "POST" }
+const DELETE = { path: "/games/", method: "DELETE" }
+// Adds Authorization header to the request object
+function authorize(request, token) {
+    return Object.assign(
+        { headers: {'Authorization': `userToken=${token}` } },
+        request)
+}
 
 describe("Game lifecycle", () => {
-    it("is not implemented yet")
-    return
-
+    
     context("Given an authenticated user", () => {
-        var user = { username: `KtorZ_${Date.now()}`, password: 'patate' }
-        const game = { name: "KtorZ's game" }
-
+        var user = { username: `KtorZ_${Date.now()}`,
+                     password: 'patate',
+                     createdAt: undefined, // for now
+                     token: undefined // for now
+                   }
+        const gameName = "KtorZ's game"
+        const gamePassword = "also patate"
+        
         // Create and authenticate the test user
         before(done => {
             utils.request({
                 path: '/users',
                 method: 'POST'
             }, user)
-            .then(res => {
-                user = Object.assign({}, user, res.result)
+                .then(res => {
+                user = Object.assign({}, user, res.result) // Adds createdAt
                 return utils.request({
                     path: `/users/authenticate?username=${user.username}`,
                     headers: { Authorization: `password=${user.password}` }
                 }).then(res => {
-                    user = Object.assign({}, user, res.result)
-                    CREATE = Object.assign(CREATE, { headers: {
-                        'Authorization': `userToken=${user.token}` }})
-                    DELETE = Object.assign(DELETE, { headers: {
-                        'Authorization': `userToken=${user.token}` }})
+                    user = Object.assign({}, user, res.result) // Adds token
                     done()
                 })
             })
@@ -37,14 +42,22 @@ describe("Game lifecycle", () => {
 
         afterEach(done => {
             utils.mongo(db => {
-                db.collection('games')
-                  .deleteOne(game)
+                db.dropCollection('games')
                   .then(() => done())
                   .catch(done)
             })
         })
 
-        const checkGame = res => {
+        // Delete the test user
+        after(done => {
+            utils.mongo(db => {
+                db.dropCollection('users')
+                  .then(() => done())
+                  .catch(done)
+            })
+        })
+
+        function checkGame(res) {
             expect(res.code).to.equal(201)
             const r = res.result
             expect(r.id).to.be.a('string')
@@ -63,8 +76,8 @@ describe("Game lifecycle", () => {
         }
 
         it("should be able to create a new game without any password", done => {
-            utils.request(CREATE)
-                 .then(checkGame)
+            utils.request(authorize(CREATE, user.token), { name: gameName })
+                //.then(checkGame)
                  .then(() => utils.mongo(
                     db => db.collection('games')
                             .findOne(game)
@@ -78,6 +91,8 @@ describe("Game lifecycle", () => {
                  .catch(done)
         })
 
+        return
+        
         it("should be able to create a new game with a password", done => {
             utils.request(CREATE, Object.assign({ password: "patate"}, game))
                  .then(checkGame)
@@ -121,16 +136,6 @@ describe("Game lifecycle", () => {
                                  })
                      ))
                      .catch(done)
-            })
-        })
-
-        // Delete the test user
-        after(done => {
-            utils.mongo(db => {
-                db.collection('users')
-                  .deleteOne({ username: user.username })
-                  .then(() => done())
-                  .catch(done)
             })
         })
     })
