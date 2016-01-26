@@ -40,6 +40,17 @@ exports.readToken = function readToken(token) {
  * Encrypt a plain-text password with itself and returns its base64 representation
  * String -> String
  */
-exports.hashPassword = function hashPassword (password) {
+exports.hashPassword = function hashPassword(password) {
     return crypto.createHmac('sha256', password).update(password).digest('base64')
+}
+
+
+/**
+ * Allows any string that is at least 4-length long with any unicode char
+ * String -> Boolean
+ */
+exports.validatePassword = function validatePassword(password) {
+    // https://github.com/mathiasbynens/regenerate
+    return /([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){4,}/
+        .test(password)
 }
