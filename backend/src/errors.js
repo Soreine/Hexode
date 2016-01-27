@@ -23,7 +23,7 @@ exports.REGISTRATION_FAILED = function (msg) {
 exports.DEBUG = function (err) {
     return {
         code: INTERNAL_SERVER_ERROR,
-        message: "TODO",
+        message: "Unkown error",
         details: plsStringify(err)
     }
 }

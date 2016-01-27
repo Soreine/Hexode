@@ -63,7 +63,9 @@ exports.pick = pick
 function pick(o, ...fields) {
     // http://stackoverflow.com/a/25835337
     return fields.reduce((a, x) => {
-        if(o.hasOwnProperty(x)) a[x] = o[x];
-        return a;
-    }, {});
+        if (o.hasOwnProperty(x)) {
+            a[x] = o[x]
+        }
+        return a
+    }, {})
 }

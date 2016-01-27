@@ -32,7 +32,7 @@ function create (req, res, next) {
     const userToken = match[1]
 
     // TODO check token validity : username exists
-    // (should we add a middleware ?)
+    // TODO We should make a middleware to parse and validate user tokens
     const {expiration} = utils.readToken(userToken)
     if (expiration < Date.now()) {
         next(ERRORS.UNAUTHORIZED())
@@ -46,7 +46,6 @@ function create (req, res, next) {
             res.status(201)
             res.json(game)
         })
-        // TODO what could happen ?
         .catch(err => next(ERRORS.DEBUG(err)))
 }
 

@@ -99,4 +99,3 @@ exports.login = function login(username, password) {
             return Promise.resolve(user)
         })
 }
-

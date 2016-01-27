@@ -47,7 +47,7 @@ function createGame(name, password) {
 }
 
 /** Lookup for an active (= non deleted) game by name
- * String -> Promise(Boolean, Error) 
+ * String -> Promise(Boolean, Error)
  */
 exports.activeGameExists = activeGameExists
 function activeGameExists(name) {
@@ -70,14 +70,14 @@ function saveGame(game) {
  * String -> (String) -> Promise(Game, Error) */
 exports.registerGame = registerGame
 function registerGame(name, password) {
-    console.log(`Register game '${name}'`
-                + (password ? ` with password '${password}`
+    console.log(`Register game [${name}]`
+                + (password ? ` with password [${password}]`
                    : " without password"))
     let checks = [validateName(name)]
     if (password) {
         checks.push(validatePassword(password))
     }
-    
+
     return Promise.all(checks)
         .then(() => activeGameExists(name))
         .then(exists => exists ?
@@ -105,7 +105,7 @@ function validateName(gamename) {
 
 /** String -> String -> Promise((), Error) */
 function validatePassword(password) {
-    if (utils.validatePassword(password)) {
+    if (!utils.validatePassword(password)) {
         return Promise.reject(exports.ERR_INVALID_PASSWORD)
     }
     return Promise.resolve()

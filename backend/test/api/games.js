@@ -64,13 +64,14 @@ describe("Game lifecycle", () => {
             expect(game.board).to.be.a('string')
             expect(game.players).to.be.an('array')
             game.players.map(p => {
-                expect(p).to.have.keys(['id','username'])
+                expect(p).to.have.keys(['id', 'username'])
             })
             return Promise.resolve(game)
         }
 
         it("should be able to create a new game without any password", done => {
-            utils.request(authorize(CREATE, user.token), { name: gameName })
+            utils.request(authorize(CREATE, user.token),
+                          { name: gameName })
                  .then(res => {
                      expect(res.code).to.be(201)
                      return checkGameObject(res.result)
@@ -88,27 +89,27 @@ describe("Game lifecycle", () => {
                  .catch(done)
         })
 
-        return
-
         it("should be able to create a new game with a password", done => {
-            utils.request(CREATE, Object.assign({ password: "patate"}, game))
+            utils.request(authorize(CREATE, user.token),
+                          { name: gameName, password: gamePassword})
                  .then(res => {
                      expect(res.code).to.be(201)
                      return checkGameObject(res.result)
                  })
                  .then(() => utils.mongo(
                     db => db.collection('games')
-                            .findOne(game)
+                         .findOne({ name: gameName })
                             .then(res => {
                                 expect(res).to.be.ok()
-                                expect(res.result.password).to.be.a('string')
-                                expect(res.result.password).to.be.a('string')
+                                expect(res.result.restricted).to.be(true)
                                 done()
                             })
                     )
                  )
                  .catch(done)
         })
+
+        return
 
         context("Given a game belonging to that user", () => {
             before(done => {

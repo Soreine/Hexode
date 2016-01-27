@@ -14,7 +14,7 @@ describe("Utility functions", () => {
             const creationDate = Date.now()
             const data = "Fact #32: Society does not includes you"
             const token = utils.genToken(data)
-            const { data:readData, expiration } = utils.readToken(token)
+            const { data: readData, expiration } = utils.readToken(token)
             expect(readData).to.equal(data)
             expect(expiration).to.be.greaterThan(creationDate)
         })
