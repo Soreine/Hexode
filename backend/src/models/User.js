@@ -70,7 +70,7 @@ function userExists(username) {
 
 /** User -> Promise(User, String) */
 function saveUser(user) {
-    console.log("Save user", user)
+    console.log("Save user", user.username)
     return mongo.connect()
         .then(db => db.collection('users').insertOne(user)
         .then(mongo.close(db)))
@@ -93,10 +93,10 @@ exports.login = function login(username, password) {
     return findUserByName(username)
         .then(user => {
             var hash = utils.hashPassword(password)
-            console.log(user)
             if (user.password !== hash) {
                 return Promise.reject(exports.ERR_WRONG_CREDENTIALS)
             }
             return Promise.resolve(user)
         })
 }
+
