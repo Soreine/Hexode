@@ -1,5 +1,5 @@
 module.exports = {
-    entry: './src/main.js',
+    entry: './src/server.js',
     module: {
         loaders: [
         {
@@ -16,14 +16,15 @@ module.exports = {
     },
     output: {
         path: './dist',
-        library: true,
-        libraryTarget: 'commonjs2',
         filename: 'app.js'
 
     },
     externals: [
         { 'express': 'commonjs express' },
-        { 'mongodb': 'commonjs mongodb' }
+        { 'mongodb': 'commonjs mongodb' },
+        { 'body-parser': 'commonjs body-parser' },
+        { 'watch': 'commonjs watch' },
+        { 'chalk': 'commonjs chalk' }
     ],
     target: 'node'
 }

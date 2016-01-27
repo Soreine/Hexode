@@ -2,7 +2,6 @@ const express = require('express')
 const router = require('./routes')
 const bodyParser = require('body-parser')
 const serveClient = require('./middlewares/serve_client')
-const chalk = require('chalk')
 
 const app = express()
 
@@ -13,7 +12,7 @@ app.use(serveClient)
 
 app.use(router)
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-    console.log(chalk.red('ERROR:'), err)
+    console.log(`[Error] ${err.code} : ${err.message}`)
     res.status(err.code)
     res.json(err)
 })

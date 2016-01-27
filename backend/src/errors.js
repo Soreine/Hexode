@@ -1,3 +1,5 @@
+const chalk = require('chalk')
+
 const BAD_REQUEST = 400
 const UNAUTHORIZED = 401
 const FORBIDDEN = 403
@@ -21,6 +23,9 @@ exports.REGISTRATION_FAILED = function (msg) {
 }
 
 exports.DEBUG = function (err) {
+    if (typeof err == 'object') {
+        console.log(chalk.red(err.stack))
+    }
     return {
         code: INTERNAL_SERVER_ERROR,
         message: "Unkown error",
