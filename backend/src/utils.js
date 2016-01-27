@@ -54,3 +54,16 @@ exports.validatePassword = function validatePassword(password) {
     return /([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){4,}/
         .test(password)
 }
+
+/**
+ * Return a new object containing only the given named fields from the
+ * original object
+ */
+exports.pick = pick
+function pick(o, ...fields) {
+    // http://stackoverflow.com/a/25835337
+    return fields.reduce((a, x) => {
+        if(o.hasOwnProperty(x)) a[x] = o[x];
+        return a;
+    }, {});
+}
