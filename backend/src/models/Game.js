@@ -30,12 +30,13 @@ exports.ERR_INVALID_PASSWORD = new Error("The password is invalid")
 function createGame(name, password) {
     const restricted = password !== undefined
     const game = {
-        "id": utils.UUID(),
-        "name": name,
-        "restricted": restricted,
-        "createdAt": Date.now(),
-        "deleted": false,
-        "board": Board.serialize(Board.createStandard())
+        id: utils.UUID(),
+        name: name,
+        restricted: restricted,
+        createdAt: Date.now(),
+        deleted: false,
+        board: Board.serialize(Board.createStandard()),
+        players: []
     }
     if (restricted) {
         let password = utils.hashPassword(password)

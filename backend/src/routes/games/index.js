@@ -41,6 +41,7 @@ function create (req, res, next) {
 
     Game.registerGame(name, password)
         // TODO automatically join the game ?
+        .then(curateGame)
         .then(game => {
             res.status(201)
             res.json(game)
@@ -55,5 +56,21 @@ router.put('/:gameId/join', join)
 router.get('/:gameId', retrieveState)
 router.get('/', listOngoing)
 */
+
+/**
+ * Returns a curated Game object, that only exposes properties defined
+ * in the API
+ * Game -> Object
+ */
+function curateGame(game) {
+    return utils.pick(game,
+               'id',
+               'name',
+               'restricted',
+               'createdAt',
+               'deleted',
+               'board',
+               'players')
+}
 
 module.exports = router

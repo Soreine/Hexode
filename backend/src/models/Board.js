@@ -37,6 +37,7 @@ exports.createStandard = function createStandard() {
  * Board -> String
  */
 exports.serialize = function serialize(board) {
+    return '"TODO serialize"'
 }
 
 /*
