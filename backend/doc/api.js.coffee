@@ -30,7 +30,7 @@ HTTP/1.1 20x OK
     "id": <String>,
     "name": <String>,
     "createdAt": <Date>,
-    "deleted": <String>,
+    "deleted": <Boolean>,
     "board": <String>,
     "players": [{
         "id": <String>,
@@ -48,7 +48,7 @@ HTTP/1.1 200 OK
         "id": <String>,
         "name": <String>,
         "createdAt": <Date>,
-        "deleted": <String>,
+        "deleted": <Boolean>,
         "board": <String>,
         "players": [{
             "id": <String>,
