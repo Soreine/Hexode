@@ -42,6 +42,20 @@ function findUserByName(username) {
         })
 }
 
+/** String -> Promise(mongo.User, Error) */
+function findUserById(id) {
+    return mongo.connect()
+        .then(db => db.collection('users')
+              .findOne({ id })
+              .then(mongo.close(db)))
+        .then(user => {
+            if (user == null) {
+                return Promise.reject(exports.ERR_NOT_FOUND)
+            }
+            return Promise.resolve(user)
+        })
+}
+
 /** String -> String -> Promise((), Error) */
 function ensureParams (username, password) {
     if (!/^[\w-]{4,}$/.test(username)) {

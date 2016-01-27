@@ -47,6 +47,13 @@ exports.UNAUTHORIZED = function () {
     }
 }
 
+exports.EXPIRED_TOKEN = function () {
+    return {
+        code: UNAUTHORIZED,
+        message: "Expired token",
+    }
+}
+
 function plsStringify(anything) {
     switch (typeof anything) {
     case 'string':
