@@ -1,12 +1,17 @@
 /* Define configuration from local environment */
 const SERVER_IP = process.env.OPENSHIFT_NODEJS_IP || 'localhost'
 const SERVER_PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080
+const MAIN = './main.js'
 
-var app = require('http').Server(require('./main.js'))
+var app = require('http').Server(require(MAIN))
 
 function restart() {
     process.stdout.write('\x1Bc')
+    Object.keys(require.cache)
+          .filter(x => new RegExp(`^${__dirname}`).test(x))
+          .forEach(x => delete require.cache[x])
     app.close(() => {
+        app = require('http').Server(require(MAIN))
         app.listen(SERVER_PORT, SERVER_IP, e => {
             if (e != null) {
                 console.log(e)
@@ -19,7 +24,7 @@ function restart() {
 
 if (["--development", "-D", "--dev"].indexOf(process.argv[2]) !== -1) {
     /* Watch for changes */
-    require('watch').watchTree('.', {'ignoreDotFiles': true}, restart)
+    require('watch').watchTree(__dirname, {'ignoreDotFiles': true}, restart)
 } else {
     restart()
 }
