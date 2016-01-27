@@ -1,4 +1,5 @@
 const expect = require('expect.js')
+const dateFormat = require('dateformat')
 const utils = require('./utils')
 
 const CREATE = { path: "/games", method: "POST" }
@@ -13,7 +14,8 @@ function authorize(request, token) {
 describe("Game lifecycle", () => {
 
     context("Given an authenticated user", () => {
-        var user = { username: `KtorZ_${Date.now()}`,
+        const now = dateFormat(Date.now(), "hh-MM-ss")
+        var user = { username: `KtorZ_${now}`,
                      password: 'patate',
                      createdAt: undefined, // for now
                      token: undefined // for now
