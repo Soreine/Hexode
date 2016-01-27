@@ -20,8 +20,8 @@ describe("Game lifecycle", () => {
                      createdAt: undefined, // for now
                      token: undefined // for now
                    }
-        const gameName = "KtorZ's game"
-        const gamePassword = "also patate"
+        const name = "KtorZ's game"
+        const password = "also patate"
 
         // Create and authenticate the test user
         before(done => {
@@ -71,17 +71,17 @@ describe("Game lifecycle", () => {
 
         it("should be able to create a new game without any password", done => {
             utils.request(authorize(CREATE, user.token),
-                          { name: gameName })
+                          { name })
                  .then(res => {
                      expect(res.code).to.be(201)
                      return checkGameObject(res.result)
                  })
                  .then(() => utils.mongo(
                     db => db.collection('games')
-                            .findOne({ name: gameName })
-                            .then(res => {
-                                expect(res).to.be.ok()
-                                expect(res.restricted).to.be(false)
+                            .findOne({ name })
+                            .then(game => {
+                                expect(game).to.be.ok()
+                                expect(game.restricted).to.be(false)
                                 done()
                             })
                     )
@@ -91,22 +91,20 @@ describe("Game lifecycle", () => {
 
         it("should be able to create a new game with a password", done => {
             utils.request(authorize(CREATE, user.token),
-                          { name: gameName, password: gamePassword})
+                          { name, password })
                  .then(res => {
                      expect(res.code).to.be(201)
                      return checkGameObject(res.result)
                  })
                  .then(() => utils.mongo(
                     db => db.collection('games')
-                         .findOne({ name: gameName })
-                            .then(res => {
-                                expect(res).to.be.ok()
-                                expect(res.result.restricted).to.be(true)
+                            .findOne({ name })
+                            .then(game => {
+                                expect(game).to.be.ok()
+                                expect(game.restricted).to.be(true)
                                 done()
-                            })
-                    )
-                 )
-                 .catch(done)
+                            })))
+                .catch(done)
         })
 
         return

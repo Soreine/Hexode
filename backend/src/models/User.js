@@ -43,7 +43,9 @@ function findUserByName(username) {
 }
 
 /** String -> Promise(mongo.User, Error) */
+exports.findUserById = findUserById
 function findUserById(id) {
+    console.log("Lookup for user.id", id)
     return mongo.connect()
         .then(db => db.collection('users')
               .findOne({ id })

@@ -6,7 +6,8 @@ const MAIN = './main.js'
 var app = require('http').Server(require(MAIN))
 
 function restart() {
-    process.stdout.write('\x1Bc')
+    // Flush console output
+    // process.stdout.write('\x1Bc')
     Object.keys(require.cache)
           .filter(x => new RegExp(`^${__dirname}`).test(x))
           .forEach(x => delete require.cache[x])

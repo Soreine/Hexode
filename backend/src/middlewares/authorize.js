@@ -3,7 +3,6 @@
  */
 const ERRORS = require('../errors')
 const User = require('../models/User')
-const Game = require('../models/Game')
 const utils = require('../utils')
 
 module.exports = {
@@ -11,10 +10,10 @@ module.exports = {
     game
 }
 
-/** 
+/**
  * Adds requirement for a valid user token. Decorates the request with
  * the user object
- * 
+ *
  * Header:
  *   Authorization: userToken=<token>
  * Possible Responses:
@@ -27,27 +26,26 @@ function user (req, res, next) {
     try {
         tokenObject = parseToken('userToken', req)
     } catch (e) {
-        if(e === PARSE_ERROR) {
+        if (e === PARSE_ERROR) {
             return next(ERRORS.UNAUTHORIZED())
         } else {
             return next(e)
         }
     }
 
-    if(isExpired(tokenObject)) {
+    if (isExpired(tokenObject)) {
         return next(ERRORS.EXPIRED_TOKEN())
     }
-    
-    var userid = tokenObject.data
+
     // Fetch user TODO cache results
-    User.findUserById(userid)
+    User.findUserById(tokenObject.data)
         .then(user => {
             // Decorate with the user
             req.user = user
             next()
         })
         .catch(err => {
-            if(err === User.ERR_NOT_FOUND) {
+            if (err === User.ERR_NOT_FOUND) {
                 return next(ERRORS.UNAUTHORIZED())
             } else {
                 return Promise.reject(err)
@@ -55,10 +53,10 @@ function user (req, res, next) {
         })
 }
 
-/** 
+/**
  * Adds requirement for a valid game token. Decorates the request with
  * the user object
- * 
+ *
  * Header:
  *   Authorization: gameToken=<token>
  * Possible Responses:
@@ -71,14 +69,14 @@ function game (req, res, next) {
     try {
         tokenObject = parseToken('gameToken', req)
     } catch (e) {
-        if(e === PARSE_ERROR) {
+        if (e === PARSE_ERROR) {
             return next(ERRORS.UNAUTHORIZED())
         } else {
             return next(e)
         }
     }
 
-    if(isExpired(tokenObject)) {
+    if (isExpired(tokenObject)) {
         return next(ERRORS.EXPIRED_TOKEN())
     }
 
@@ -87,7 +85,7 @@ function game (req, res, next) {
 
 /**
  * Parses a token of the form tag=... in the Authorization header
- * Throws: 
+ * Throws:
  * String, Request -> { data, expiration }
  */
 const PARSE_ERROR = new Error("Parsing error")
@@ -96,7 +94,7 @@ function parseToken(tag, req) {
     if (!authHeader) { throw PARSE_ERROR }
 
     // TODO parse among multiple tags
-    var token = new RegExp(`^${tag}=([\w=\+]+)$`).exec(authHeader)
+    var token = new RegExp(`^${tag}=(.*)$`).exec(authHeader)
     if (!token) { throw PARSE_ERROR }
 
     return utils.readToken(token[1])

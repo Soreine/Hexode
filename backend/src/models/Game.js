@@ -39,11 +39,9 @@ function createGame(name, password) {
         players: []
     }
     if (restricted) {
-        let password = utils.hashPassword(password)
-        return Object.assign({ password }, game)
-    } else {
-        return game
+        game.password = utils.hashPassword(password)
     }
+    return game
 }
 
 /** Lookup for an active (= non deleted) game by name
