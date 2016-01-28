@@ -1,59 +1,124 @@
 const expect = require('expect.js')
 const dateFormat = require('dateformat')
 const utils = require('./utils')
+const backendUtils = require('../../src/utils')
 
 const CREATE = { path: "/games", method: "POST" }
 const DELETE = { path: "/games/", method: "DELETE" }
-// Adds Authorization header to the request object
+/** Returns a new request object with an authorization header */
 function authorize(request, token) {
     return Object.assign(
         { headers: {'Authorization': `userToken=${token}` } },
         request)
 }
 
+/** Returns a hook that will drops the given collection */
+function plsDropCollection(collectionName) {
+    return done => {
+        utils.mongo(db => db.dropCollection(collectionName)
+                    .then(() => done())
+                    .catch(done))
+    }
+}
+
+/**
+ * Register and log a user, returning a user object with token
+ * { username, password } -> Promise(User)
+ */
+function registerAndLog(userParam) {
+    var user = Object.assign({}, userParam)
+    return utils
+        .request({
+            path: '/users',
+            method: 'POST'
+        }, user)
+        .then(res => {
+            user.createdAt = res.result.createdAt
+            return utils.request({
+                path: `/users/authenticate?username=${user.username}`,
+                headers: { Authorization: `password=${user.password}` }
+            }).then(res => {
+                user.token = res.result.token
+                return user
+            })
+        })
+}
+
 describe("Game lifecycle", () => {
 
-    context("Given an authenticated user", () => {
+    const name = "KtorZ's game"
+    const password = "also patate"
+
+    context("An unauthorized and silly user", () => {
+        var user = { username: 'GameTest_Evil',
+                     password: 'hackerGod'}
+
+        // Create and authenticate the test user
+        before(done => {
+            registerAndLog(user)
+                .then(loggedUser => {
+                    Object.assign(user, loggedUser)
+                    done()
+                })
+                .catch(done)
+        })
+
+        after(plsDropCollection('users'))
+
+        it("cannot create games without token", done => {
+            utils.request(CREATE,
+                          { name })
+                 .then(res => expect(res.code).to.be(401))
+                 .then(() => utils.mongo(
+                     db => db.collection('games')
+                         .findOne({ name })
+                             .then(game => {
+                                 expect(game).not.to.be.ok()
+                                 done()
+                             })))
+                 .catch(done)
+        })
+
+        it("cannot create games with an expired token", done => {
+            var expiredToken = backendUtils.genToken(user.username, Date.now())
+            utils.request(authorize(CREATE, expiredToken),
+                          { name })
+                 .then(res => {
+                     expect(res.code).to.be(401)
+                     expect(res.result.message).to.be('Expired token')
+                 })
+                 .then(() => utils.mongo(
+                     db => db.collection('games')
+                         .findOne({ name })
+                             .then(game => {
+                                 expect(game).not.to.be.ok()
+                                 done()
+                             })))
+                 .catch(done)
+        })
+    })
+
+    context("An authenticated user", () => {
         const now = dateFormat(Date.now(), "hh-MM-ss")
-        var user = { username: `KtorZ_${now}`,
+        var user = { username: `GameTest_${now}`,
                      password: 'patate',
                      createdAt: undefined, // for now
                      token: undefined // for now
                    }
-        const name = "KtorZ's game"
-        const password = "also patate"
 
         // Create and authenticate the test user
         before(done => {
-            utils.request({
-                path: '/users',
-                method: 'POST'
-            }, user)
-                .then(res => {
-                user = Object.assign({}, user, res.result) // Adds createdAt
-                return utils.request({
-                    path: `/users/authenticate?username=${user.username}`,
-                    headers: { Authorization: `password=${user.password}` }
-                }).then(res => {
-                    user = Object.assign({}, user, res.result) // Adds token
+            registerAndLog(user)
+                .then(loggedUser => {
+                    Object.assign(user, loggedUser)
                     done()
                 })
-            })
-            .catch(done)
+                .catch(done)
         })
 
-        afterEach(done => {
-            utils.mongo(db => db.dropCollection('games')
-                .then(() => done())
-                .catch(done))
-        })
+        afterEach(plsDropCollection('games'))
 
-        // Delete the test user
-        after(done => {
-            utils.mongo(db => db.dropCollection('users')
-                .then(() => done())
-                .catch(done))
-        })
+        after(plsDropCollection('users'))
 
         function checkGameObject(game) {
             expect(game.id).to.be.a('string')
@@ -118,6 +183,11 @@ describe("Game lifecycle", () => {
                          done()
                      })
                      .catch(done)
+            })
+
+
+            it("cannot create a game with the same name", done => {
+                done(new Error("TODO"))
             })
 
             it("should be able to delete that game", done => {

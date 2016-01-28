@@ -10,7 +10,7 @@ const CONFIG = {
     //Add Static conf values here
     DB_URL: DB_URL,
     USER_TOKEN_EXPIRATION: 1000 * 60 * 60 * 24 * 30, // 30 days
-    GAME_TOKEN_EXPIRATION: 1000 * 60 * 60 * 24 , // 1 day
+    GAME_TOKEN_EXPIRATION: 1000 * 60 * 60 * 24, // 1 day
     SECRET_KEY: process.env.SECRET_KEY || "developmentKey",
     CLIENT_FILE: process.cwd() + "/dist/client/app.html"
 }

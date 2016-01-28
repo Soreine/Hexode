@@ -105,5 +105,5 @@ function parseToken(tag, req) {
  * { expiration } -> Boolean
  */
 function isExpired(tokenObject) {
-    return tokenObject.expiration > Date.now()
+    return tokenObject.expiration < Date.now()
 }
