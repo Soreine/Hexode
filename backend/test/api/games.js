@@ -174,6 +174,7 @@ describe("Game lifecycle", () => {
 
         return
 
+        /*eslint-disable no-unreachable */
         context("Given a game belonging to that user", () => {
             before(done => {
                 utils.request(CREATE, game)
@@ -208,5 +209,6 @@ describe("Game lifecycle", () => {
                      .catch(done)
             })
         })
+        /*eslint-enable no-unreachable */
     })
 })

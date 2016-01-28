@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha --recursive --compilers js:babel-core/register -R mochawesome --reporter-options=reportDir=reports",
     "eslint": "eslint src/ test/ -f html -o reports/eslint.html",
+    "eslint-debug": "eslint src/ test/",
     "dev": "babel-node ./src/server.js --dev",
     "start": "node ./dist/app.js",
     "doc": "apidoc -i doc -o api",
