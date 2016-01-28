@@ -12,7 +12,7 @@ app.use(serveClient)
 
 app.use(router)
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-    console.log(err)
+    console.log(`[Error] ${err.code} : ${err.message}`)
     res.status(err.code)
     res.json(err)
 })

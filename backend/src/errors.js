@@ -1,3 +1,5 @@
+const chalk = require('chalk')
+
 const BAD_REQUEST = 400
 const UNAUTHORIZED = 401
 const FORBIDDEN = 403
@@ -21,9 +23,12 @@ exports.REGISTRATION_FAILED = function (msg) {
 }
 
 exports.DEBUG = function (err) {
+    if (typeof err == 'object') {
+        console.log(chalk.red(err.stack))
+    }
     return {
         code: INTERNAL_SERVER_ERROR,
-        message: "TODO",
+        message: "Unkown error",
         details: plsStringify(err)
     }
 }
@@ -39,6 +44,13 @@ exports.UNAUTHORIZED = function () {
     return {
         code: UNAUTHORIZED,
         message: "Valid access token required",
+    }
+}
+
+exports.EXPIRED_TOKEN = function () {
+    return {
+        code: UNAUTHORIZED,
+        message: "Expired token",
     }
 }
 

@@ -10,14 +10,14 @@ exports.UUID = function UUID() {
 }
 
 /**
- * Generates a token containing the given data, along with an
- * expiration date.
- * String -> String
+ * Generates a token containing the given data, with an
+ * expiration date
+ * String, Date -> String
  */
-exports.genToken = function genToken(data) {
+exports.genToken = function genToken(data, expiration) {
     let cipher = crypto.createCipher('aes256', CONFIG.SECRET_KEY)
-    cipher.update(data + "|" + (Date.now() + CONFIG.EXPIRATION_DELAY), 'utf8', 'base64')
-    return cipher.final('base64')
+    var ciphered = cipher.update(data + "|" + expiration, 'utf8', 'base64')
+    return ciphered + cipher.final('base64')
 }
 
 /**
@@ -27,11 +27,11 @@ exports.genToken = function genToken(data) {
  */
 exports.readToken = function readToken(token) {
     let decipher = crypto.createDecipher('aes256', CONFIG.SECRET_KEY)
-    decipher.update(token, 'base64', 'utf8')
-    let plaintext = decipher.final('utf8')
+    var plaintext = decipher.update(token, 'base64', 'utf8')
+    plaintext += decipher.final('utf8')
     let [data, expiration] = plaintext.split('|')
     return {
-        data,
+        data: data,
         expiration: parseInt(expiration, 10)
     }
 }
@@ -40,6 +40,32 @@ exports.readToken = function readToken(token) {
  * Encrypt a plain-text password with itself and returns its base64 representation
  * String -> String
  */
-exports.hashPassword = function hashPassword (password) {
+exports.hashPassword = function hashPassword(password) {
     return crypto.createHmac('sha256', password).update(password).digest('base64')
+}
+
+
+/**
+ * Allows any string that is at least 4-length long with any unicode char
+ * String -> Boolean
+ */
+exports.validatePassword = function validatePassword(password) {
+    // https://github.com/mathiasbynens/regenerate
+    return /([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){4,}/
+        .test(password)
+}
+
+/**
+ * Return a new object containing only the given named fields from the
+ * original object
+ */
+exports.pick = pick
+function pick(o, ...fields) {
+    // http://stackoverflow.com/a/25835337
+    return fields.reduce((a, x) => {
+        if (o.hasOwnProperty(x)) {
+            a[x] = o[x]
+        }
+        return a
+    }, {})
 }

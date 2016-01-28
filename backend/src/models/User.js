@@ -27,7 +27,7 @@ function createUser(username, password) {
     }
 }
 
-/** String -> Promise(mongo.User, String) */
+/** String -> Promise(mongo.User, Error) */
 function findUserByName(username) {
     console.log("Lookup for user", username)
     return mongo.connect()
@@ -42,15 +42,29 @@ function findUserByName(username) {
         })
 }
 
-/** String -> String -> Promise((), String) */
+/** String -> Promise(mongo.User, Error) */
+exports.findUserById = findUserById
+function findUserById(id) {
+    console.log("Lookup for user.id", id)
+    return mongo.connect()
+        .then(db => db.collection('users')
+              .findOne({ id })
+              .then(mongo.close(db)))
+        .then(user => {
+            if (user == null) {
+                return Promise.reject(exports.ERR_NOT_FOUND)
+            }
+            return Promise.resolve(user)
+        })
+}
+
+/** String -> String -> Promise((), Error) */
 function ensureParams (username, password) {
     if (!/^[\w-]{4,}$/.test(username)) {
         return Promise.reject(exports.ERR_INVALID_USERNAME)
     }
 
-    // https://github.com/mathiasbynens/regenerate
-    // Allow any string that is at least 4-length long with any unicode char
-    if (!/([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){4,}/.test(password)) {
+    if (!utils.validatePassword(password)) {
         return Promise.reject(exports.ERR_INVALID_PASSWORD)
     }
 
@@ -72,7 +86,7 @@ function userExists(username) {
 
 /** User -> Promise(User, String) */
 function saveUser(user) {
-    console.log("Save user", user)
+    console.log("Save user", user.username)
     return mongo.connect()
         .then(db => db.collection('users').insertOne(user)
         .then(mongo.close(db)))
@@ -95,7 +109,6 @@ exports.login = function login(username, password) {
     return findUserByName(username)
         .then(user => {
             var hash = utils.hashPassword(password)
-            console.log(user)
             if (user.password !== hash) {
                 return Promise.reject(exports.ERR_WRONG_CREDENTIALS)
             }

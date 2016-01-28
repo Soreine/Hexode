@@ -35,3 +35,6 @@ after_success:
 
 after_script:
     - source .travis/publish_reports.sh
+
+after_failure:
+    - npm --prefix backend run eslint-debug

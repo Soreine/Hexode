@@ -1,5 +1,6 @@
 const express = require('express')
 const ERRORS = require('../../errors')
+const CONFIG = require('../../config')
 const User = require('../../models/User')
 const utils = require('../../utils')
 const router = express.Router()
@@ -24,7 +25,7 @@ function register(req, res, next) {
             .then(user => ({
                 id: user.id,
                 username: user.username,
-                token: utils.genToken(user.id),
+                token: utils.genToken(user.id, Date.now() + CONFIG.USER_TOKEN_EXPIRATION),
                 createdAt: user.createdAt
             }))
             .then(data => {
@@ -55,7 +56,7 @@ function authenticate(req, res, next) {
         .then(user => {
             res.status(200)
             res.json({
-                token: utils.genToken(user.id),
+                token: utils.genToken(user.id, Date.now() + CONFIG.USER_TOKEN_EXPIRATION)
             })
         })
         .catch(() => next(ERRORS.WRONG_CREDENTIALS()))
