@@ -11,12 +11,12 @@ describe("Utility functions", () => {
 
     context("Making tokens", () => {
         it("should be able to encrypt data in a token and read it back", () => {
-            const creationDate = Date.now()
-            const data = "Fact #32: Society does not includes you"
-            const token = utils.genToken(data)
-            const { data: readData, expiration } = utils.readToken(token)
-            expect(readData).to.equal(data)
-            expect(expiration).to.be.greaterThan(creationDate)
+            const expirationDate = Date.now() + 1337
+            const inputData = "Fact #32: Society does not includes you"
+            const token = utils.genToken(inputData, expirationDate)
+            const { data, expiration } = utils.readToken(token)
+            expect(data).to.equal(inputData)
+            expect(expiration).to.be(expirationDate)
         })
     })
 })

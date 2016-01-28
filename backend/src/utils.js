@@ -10,13 +10,13 @@ exports.UUID = function UUID() {
 }
 
 /**
- * Generates a token containing the given data, along with an
- * expiration date.
- * String -> String
+ * Generates a token containing the given data, with an
+ * expiration date
+ * String, Date -> String
  */
-exports.genToken = function genToken(data) {
+exports.genToken = function genToken(data, expiration) {
     let cipher = crypto.createCipher('aes256', CONFIG.SECRET_KEY)
-    var ciphered = cipher.update(data + "|" + (Date.now() + CONFIG.EXPIRATION_DELAY), 'utf8', 'base64')
+    var ciphered = cipher.update(data + "|" + expiration, 'utf8', 'base64')
     return ciphered + cipher.final('base64')
 }
 
