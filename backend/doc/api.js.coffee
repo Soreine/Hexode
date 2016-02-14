@@ -26,7 +26,6 @@ HTTP/1.1 20x OK
     "name": <String>,
     "createdAt": <Date>,
     "deleted": <Boolean>,
-    "board": <String>,
     "players": [{
         "id": <String>,
         "username": <Number>
@@ -44,7 +43,6 @@ HTTP/1.1 200 OK
         "name": <String>,
         "createdAt": <Date>,
         "deleted": <Boolean>,
-        "board": <String>,
         "players": [{
             "id": <String>,
             "username": <Number>
@@ -52,6 +50,18 @@ HTTP/1.1 200 OK
     }]
 }
 ###
+
+###
+@apiDefine boardSuccess
+@apiSuccessExample {json} Game:
+HTTP/1.1 20x OK
+
+Board object
+###
+
+###########################################
+# User management
+###########################################
 
 ###
 @apiName AuthenticateUser
@@ -99,9 +109,13 @@ HTTP/1.1 201 Created
 @apiVersion 0.0.1
 ###
 
+###########################################
+# Game management
+###########################################
+
 ###
 @apiName GetGames
-@api {get} /games Retrieve all ongoing games
+@api {get} /games List all ongoing games
 @apiGroup Game
 
 @apiUse json
@@ -195,10 +209,14 @@ null
 @apiVersion 0.0.1
 ###
 
+###########################################
+# Playing a game
+###########################################
+
 ###
 @apiName InvadeTile
 @api {patch} /games/:gameId/invade Invade an available tile
-@apiGroup Game
+@apiGroup Play
 
 @apiUse json
 @apiUse userAuth
@@ -208,10 +226,28 @@ null
 @apiParam {Number} tileId The tile id
 @apiParam {Number} units The number of units
 
-@apiSuccess {json} 200
-@apiUse gameSuccess
+@apiSuccess {json} 200 The new board's state
+@apiUse boardSuccess
 
-@apiError {json} 400 Bad Request: the tile is invalid or the amount of units is invalid
+@apiError {json} 400 Bad Request: the move is invalid
+@apiError {json} 401 Unauthorized: a wrong token is given
+@apiUse error
+@apiVersion 0.0.1
+###
+
+###
+@apiName GetBoard
+@api {get} /games/:gameId/board Get a game's board state
+@apiGroup Play
+
+@apiUse json
+@apiUse userAuth
+
+@apiParam {String} gameId The game id
+
+@apiSuccess {json} 200 The game's board
+@apiUse boardSuccess
+
 @apiError {json} 401 Unauthorized: a wrong token is given
 @apiUse error
 @apiVersion 0.0.1
