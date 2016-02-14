@@ -8,13 +8,8 @@ HTTP/1.1 4xx
 ###
 
 ###
-@apiDefine userRes
+@apiDefine userAuth
 @apiHeader {String} Authorization A valid user token
-###
-
-###
-@apiDefine gameRes
-@apiHeader {String} Authorization A valid game token
 ###
 
 ###
@@ -110,7 +105,7 @@ HTTP/1.1 201 Created
 @apiGroup Game
 
 @apiUse json
-@apiUse userRes
+@apiUse userAuth
 
 @apiSuccess {json} 200 All available games
 @apiUse gamesSuccess
@@ -121,38 +116,12 @@ HTTP/1.1 201 Created
 ###
 
 ###
-@apiName ConnectGame
-@api {get} /games/authenticate?gameId=:gameId Retrieve a valid game token
-@apiGroup Game
-
-@apiUse json
-@apiUse userRes
-@apiHeader {string} Authorization The encoded game password
-
-@apiParam {String} gameId The game id
-@apiParam {String} [password] The game password
-
-@apiSuccess {json} 200 Returns an access token for that game
-@apiSuccessExample {json} Game token:
-HTTP/1.1 200 OK
-{
-    "token": <String>
-}
-
-@apiError {json} 401 Unauthorized: a wrong token is given
-@apiError {json} 403 Wrong credentials: the given password is wrong
-@apiError {json} 404 Not Found: the given game does not exist
-@apiUse error
-@apiVersion 0.0.1
-###
-
-###
 @apiName GetGame
 @api {get} /games/:gameId Retrieve a specific game
 @apiGroup Game
 
 @apiUse json
-@apiUse userRes
+@apiUse userAuth
 
 @apiParam {String} gameId The game id
 
@@ -170,7 +139,7 @@ HTTP/1.1 200 OK
 @apiGroup Game
 
 @apiUse json
-@apiUse userRes
+@apiUse userAuth
 
 @apiParam {String{2..20}} name The game name
 @apiParam {String{..50}} [password] The game password
@@ -190,7 +159,7 @@ HTTP/1.1 200 OK
 @apiGroup Game
 
 @apiUse json
-@apiUse gameRes
+@apiUse userAuth
 
 @apiParam {String} gameId The game id
 
@@ -211,7 +180,7 @@ null
 @apiGroup Game
 
 @apiUse json
-@apiUse gameRes
+@apiUse userAuth
 
 @apiParam {String} gameId The game id
 @apiParam {String} userId The user id
@@ -232,7 +201,7 @@ null
 @apiGroup Game
 
 @apiUse json
-@apiUse gameRes
+@apiUse userAuth
 
 @apiParam {String} gameId The game id
 @apiParam {String} userId The user id
