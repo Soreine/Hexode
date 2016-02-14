@@ -58,4 +58,20 @@ function curateGame(game) {
                'players')
 }
 
+/**
+ * Returns a curated Game object, that only exposes properties defined
+ * in the API
+ * Game -> Object
+ */
+function curateGame(game) {
+    return utils.pick(game,
+               'id',
+               'name',
+               'restricted',
+               'createdAt',
+               'deleted',
+               'board',
+               'players')
+}
+
 module.exports = router
