@@ -1,0 +1,3 @@
+--ignore-dir=reports
+--ignore-dir=api
+--noignore-dir=test
