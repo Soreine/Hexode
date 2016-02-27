@@ -57,11 +57,10 @@ function activeGameExists(name) {
 /** Game -> Promise(Game, Error) */
 exports.saveGame = saveGame
 function saveGame(game) {
-    return mongo.connect()
-        .then(db => db.collection('games')
-              .insertOne(game)
-              .then(mongo.close(db)))
-        .then(() => game)
+    return mongo.operation(
+        db => db.collection('games')
+            .insertOne(game))
+    .then(() => game)
 }
 
 /** Register a new game with optional password
@@ -85,12 +84,20 @@ function registerGame(name, password) {
 }
 
 
-/** String -> Promise(Game, Error) */
+/** Can fail ERR_NOT_FOUND
+ * String -> Promise(Game, Error) */
 function findActiveGameByName(name) {
-    return mongo.connect()
-        .then(db => db.collection('games')
-              .findOne({ name }) // TODO filter out deleted ones
-              .then(mongo.close(db)))
+    return mongo.operation(
+        db => db.collection('games')
+            .findOne({ name }))
+    .then(game => {
+        if (!game) {
+            // TODO filter out deleted
+            throw exports.ERR_NOT_FOUND;
+        } else {
+            return game;
+        }
+    })
 }
 
 /** String -> String -> Promise((), Error) */

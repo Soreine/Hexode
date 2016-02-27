@@ -1,17 +1,25 @@
 const CONFIG = require('./config.js')
 var mongodb = require('mongodb')
 
-/** Unit -> Promise(mongodb.Db, Error) */
+/** () -> Promise(mongodb.Db, Error) */
 mongodb.connect = () => {
     return mongodb.MongoClient.connect(CONFIG.DB_URL)
 }
 
-/** mongodb.Db -> (a -> Promise(a, Error)) */
-mongodb.close = db => {
-    return result => {
-        db.close()
-        return Promise.resolve(result)
-    }
+/** (mongodb.Db -> Promise(a, e)) -> Promise(a, e) */
+mongodb.operation = (operate) => {
+    return mongodb.connect()
+    .then(db => {
+        return operate(db)
+        .then(success => {
+            db.close()
+            return success
+        }, failure => {
+            console.log('failed')
+            db.close();
+            throw failure;
+        })
+    })
 }
 
 module.exports = mongodb

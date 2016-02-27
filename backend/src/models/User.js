@@ -30,32 +30,30 @@ function createUser(username, password) {
 /** String -> Promise(mongo.User, Error) */
 function findUserByName(username) {
     console.log("Lookup for user", username)
-    return mongo.connect()
-        .then(db => db.collection('users')
-              .findOne({ username })
-              .then(mongo.close(db)))
-        .then(user => {
-            if (user == null) {
-                return Promise.reject(exports.ERR_NOT_FOUND)
-            }
-            return Promise.resolve(user)
-        })
+    return mongo.operation(
+        db => db.collection('users')
+            .findOne({ username }))
+    .then(user => {
+        if (user == null) {
+            return Promise.reject(exports.ERR_NOT_FOUND)
+        }
+        return Promise.resolve(user)
+    })
 }
 
 /** String -> Promise(mongo.User, Error) */
 exports.findUserById = findUserById
 function findUserById(id) {
     console.log("Lookup for user.id", id)
-    return mongo.connect()
-        .then(db => db.collection('users')
-              .findOne({ id })
-              .then(mongo.close(db)))
-        .then(user => {
-            if (user == null) {
-                return Promise.reject(exports.ERR_NOT_FOUND)
-            }
-            return Promise.resolve(user)
-        })
+    return mongo.operation(
+        db => db.collection('users')
+            .findOne({ id }))
+    .then(user => {
+        if (user == null) {
+            return Promise.reject(exports.ERR_NOT_FOUND)
+        }
+        return Promise.resolve(user)
+    })
 }
 
 /** String -> String -> Promise((), Error) */
@@ -87,10 +85,10 @@ function userExists(username) {
 /** User -> Promise(User, String) */
 function saveUser(user) {
     console.log("Save user", user.username)
-    return mongo.connect()
-        .then(db => db.collection('users').insertOne(user)
-        .then(mongo.close(db)))
-        .then(() => user)
+    return mongo.operation(
+        db => db.collection('users')
+            .insertOne(user))
+    .then(() => user)
 }
 
 /** String -> String -> Promise(User, String) */
