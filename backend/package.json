@@ -40,15 +40,14 @@
     "babel-polyfill": "^6.3.14",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
-    "json-loader": "^0.5.4"
-  },
-  "optionalDependencies": {
+    "json-loader": "^0.5.4",
     "apidoc": "^0.14.0",
     "eslint": "^1.10.3",
     "expect.js": "^0.3.1",
     "mocha": "^2.3.4",
     "mochawesome": "^1.2.1",
-    "watch": "^0.17.1"
+    "watch": "^0.17.1",
+    "webpack": "^1.12.14"
   },
   "babel": {
     "presets": [
