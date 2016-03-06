@@ -3,7 +3,7 @@ const chalk = require('chalk')
 const BAD_REQUEST = 400
 const UNAUTHORIZED = 401
 const FORBIDDEN = 403
-// const NOT_FOUND = 404
+const NOT_FOUND = 404
 const INTERNAL_SERVER_ERROR = 500
 
 exports.MISSING_PARAMETERS = function (...params) {
@@ -37,6 +37,13 @@ exports.WRONG_CREDENTIALS = function () {
     return {
         code: FORBIDDEN,
         message: "Invalid credentials. Access not allowed",
+    }
+}
+
+exports.NOT_FOUND = function () {
+    return {
+        code: NOT_FOUND,
+        message: "Not found",
     }
 }
 

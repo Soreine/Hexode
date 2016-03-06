@@ -89,8 +89,30 @@ function registerGame(name, password) {
 function findActiveGameByName(name) {
     return mongo.connect()
         .then(db => db.collection('games')
-              .findOne({ name }) // TODO filter out deleted ones
+              .findOne({ name })
               .then(mongo.close(db)))
+    .then(game => {
+        if (!game || game.deleted) {
+            throw exports.ERR_NOT_FOUND;
+        } else {
+            return game;
+        }
+    })
+}
+
+/** String -> Promise(Game, Error) */
+exports.findGameById = findGameById
+function findGameById(id) {
+    return mongo.operation(
+        db => db.collection('games')
+            .findOne({ name }))
+    .then(game => {
+        if (!game) {
+            throw exports.ERR_NOT_FOUND;
+        } else {
+            return game;
+        }
+    })
 }
 
 /** String -> String -> Promise((), Error) */

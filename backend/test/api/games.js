@@ -4,11 +4,14 @@ const utils = require('./utils')
 const backendUtils = require('../../src/utils')
 
 const CREATE = { path: "/games", method: "POST" }
-const DELETE = { path: "/games/", method: "DELETE" }
+const LIST = { path: "/games", method: "GET" }
+const DELETE = gameId => ({ path: `/games/{gameId}`, method: "DELETE" })
+const RETRIEVE = gameId => ({ path: `/games/{gameId}`, method: "GET" })
+
 /** Returns a new request object with an authorization header */
 function authorize(request, token) {
     return Object.assign(
-        { headers: {'Authorization': `userToken=${token}` } },
+        { headers: { 'Authorization': `userToken=${token}` } },
         request)
 }
 
@@ -157,58 +160,70 @@ describe("Game lifecycle", () => {
         it("should be able to create a new game with a password", done => {
             utils.request(authorize(CREATE, user.token),
                           { name, password })
-                 .then(res => {
-                     expect(res.code).to.be(201)
-                     return checkGameObject(res.result)
-                 })
-                 .then(() => utils.mongo(
-                    db => db.collection('games')
-                            .findOne({ name })
-                            .then(game => {
-                                expect(game).to.be.ok()
-                                expect(game.restricted).to.be(true)
-                                done()
-                            })))
-                .catch(done)
+            .then(res => {
+                expect(res.code).to.be(201)
+                return checkGameObject(res.result)
+            })
+            .then(() => utils.mongo(
+               db => db.collection('games')
+                       .findOne({ name })
+                       .then(game => {
+                           expect(game).to.be.ok()
+                           expect(game.restricted).to.be(true)
+                           done()
+                       })))
+           .catch(done)
         })
 
-        return
-
-        /*eslint-disable no-unreachable */
         context("Given a game belonging to that user", () => {
+            var game;
+
             before(done => {
-                utils.request(CREATE, game)
-                     .then(res => {
-                         game = res.result
-                         DELETE.path += res.result.id
-                         done()
-                     })
-                     .catch(done)
+                utils.request(authorize(CREATE, user.token),
+                              { name, password })
+                .then(res => {
+                    game = res.result
+                    done()
+                })
+                .catch(done)
             })
 
+            it("should be able to retrieve the game", done => {
+                utils.request(authorize(RETRIEVE(game.id), user.token))
+                .then(res => {
+                    expect(res.code).to.be(200)
+                    expect(res.result).to.eql(game);
+                    done();
+                })
+            })
 
-            it("cannot create a game with the same name", done => {
-                done(new Error("TODO"))
+            it("should be able to list ongoing games", done => {
+                utils.request(authorize(LIST, user.token))
+                .then(res => {
+                    expect(res.code).to.be(200)
+                    expect(res.result).to.have.length(1);
+                    expect(res.result[1]).to.eql(game);
+                    done();
+                })
             })
 
             it("should be able to delete that game", done => {
-                utils.request(DELETE)
-                     .then(res => {
-                         expect(res).to.be.ok()
-                         expect(res.code).to.equal(204)
-                         expect(res.result).not.to.be.ok()
-                     })
-                     .then(() => utils.mongo(
-                         db => db.collection('games')
-                                 .findOne({ id: game.id })
-                                 .then(res => {
-                                     expect(res).not.to.be.ok()
-                                     done()
-                                 })
-                     ))
-                     .catch(done)
+                utils.request(authorize(DELETE(game.id), user.token))
+                .then(res => {
+                    expect(res).to.be.ok()
+                    expect(res.code).to.equal(204)
+                    expect(res.result).not.to.be.ok()
+                })
+                .then(() => utils.mongo(
+                    db => db.collection('games')
+                            .findOne({ id: game.id })
+                            .then(res => {
+                                expect(res).not.to.be.ok()
+                                done()
+                            })
+                ))
+                .catch(done)
             })
         })
-        /*eslint-enable no-unreachable */
     })
 })

@@ -32,8 +32,32 @@ function create(req, res, next) {
             res.status(201)
             res.json(game)
         })
+        // TODO better error handling
         .catch(err => next(ERRORS.DEBUG(err)))
 }
+
+/*
+ * Header:
+ *   Authorization: A valid user token
+ * Response:
+ *   201 (JSON) The retrieved game
+ *   401 Unauthorized: wrong token
+ *   404 Not found
+ */
+router.get('/:gameId', authorize.user)
+router.post('/:gameId', retrieve)
+function retrieve(req, res, next) {
+    const gameId = req.params.gameId
+
+    Game.findGameById(gameId)
+        .then(curateGame)
+        .then(game => {
+            res.status(201)
+            res.json(game)
+        })
+        .catch(err => next(ERRORS.NOT_FOUND()))
+}
+
 
 /*
 router.put('/:gameId/invade', invadeTile)
